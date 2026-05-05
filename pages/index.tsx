@@ -9,12 +9,11 @@ import {
   HardDrive, 
   Diamond, 
   Mail, 
-  // Company Icons from Lucide
-  Twitter,
   Instagram,
   Send,
-  // Using MessageSquare for Discord look as Lucide generic
-  MessageSquare 
+  MessageSquare,
+  // Use 'X' instead of 'Twitter'
+  X 
 } from 'lucide-react';
 
 export default function Home() {
