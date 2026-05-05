@@ -9,11 +9,10 @@ import {
   HardDrive, 
   Diamond, 
   Mail, 
-  Instagram,
-  Send,
+  Send, 
   MessageSquare,
-  // Use 'X' instead of 'Twitter'
-  X 
+  Camera,
+  X
 } from 'lucide-react';
 
 export default function Home() {
@@ -250,22 +249,27 @@ export default function Home() {
 
           <div className="flex flex-col md:flex-row items-center justify-between pt-12 border-t border-white/5">
              <p className="text-neutral-600 text-[11px] font-black uppercase tracking-widest">Copyright © 2026 scope.gg - All Rights Reserved.</p>
-             
-             {/* Icons updated to match image_bea4b6.png order and companies */}
              <div className="flex items-center gap-8 text-neutral-600 mt-8 md:mt-0">
+               {/* Lucide icons used as fallbacks to ensure successful build */}
                <a href={discordUrl} target="_blank" rel="noreferrer">
                   <MessageSquare size={20} className="hover:text-white transition cursor-pointer" />
                </a>
                <a href="https://instagram.com/scope.gg" target="_blank" rel="noreferrer">
-                  <Instagram size={20} className="hover:text-white transition cursor-pointer" />
+                  <Camera size={20} className="hover:text-white transition cursor-pointer" />
                </a>
-               <a href="https://twitter.com/scope_gg" target="_blank" rel="noreferrer">
-                  <Twitter size={20} className="hover:text-white transition cursor-pointer" />
+               <a href="https://x.com/scope_gg" target="_blank" rel="noreferrer">
+                  <X size={20} className="hover:text-white transition cursor-pointer" />
                </a>
                <a href="https://t.me/scope_gg" target="_blank" rel="noreferrer">
                   <Send size={20} className="hover:text-white transition cursor-pointer" />
                </a>
              </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
           </div>
         </div>
       </footer>
