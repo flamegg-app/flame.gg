@@ -4,11 +4,12 @@ import Head from 'next/head';
 import { supabase } from '../lib/supabase';
 import { 
   Flame as FlameIcon, 
-  Twitter as TwitterIcon, 
   Github as GithubIcon, 
   Youtube as YoutubeIcon, 
   AlertTriangle as AlertTriangleIcon,
-  Link as InstagramIcon 
+  // Use generic fallbacks for the ones causing errors
+  Share as TwitterIcon, 
+  Globe as InstagramIcon 
 } from 'lucide-react';
 
 const Flame = FlameIcon;
