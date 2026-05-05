@@ -51,6 +51,7 @@ export default function Home() {
         <div className="hidden md:flex items-center gap-8 text-[13px] font-bold text-neutral-300">
           <Link href="/help" className="hover:text-white transition">Help Center</Link>
           <a href={discordUrl} target="_blank" rel="noreferrer" className="hover:text-white transition">Discord</a>
+          {/* Fixed Leaderboard Link in Header */}
           <Link href="/leaderboard" className="hover:text-white transition">Leaderboard</Link>
           <button onClick={() => scrollToSection('pricing')} className="hover:text-white transition">Pricing</button>
           <Link href="/dashboard" className="bg-purple-600/20 text-purple-200 border border-purple-500/30 px-6 py-2 rounded-full font-black hover:bg-purple-600/40 transition">
@@ -235,6 +236,7 @@ export default function Home() {
                 <ul className="space-y-4">
                   {col.links.map(l => (
                     <li key={l.n}>
+                      {/* Fixed Leaderboard Link logic in Footer */}
                       {l.h.startsWith('#') ? (
                         <button onClick={() => scrollToSection(l.h.substring(1))} className="text-neutral-500 hover:text-white transition text-[13px] font-bold">{l.n}</button>
                       ) : (
@@ -250,7 +252,6 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-center justify-between pt-12 border-t border-white/5">
              <p className="text-neutral-600 text-[11px] font-black uppercase tracking-widest">Copyright © 2026 scope.gg - All Rights Reserved.</p>
              <div className="flex items-center gap-8 text-neutral-600 mt-8 md:mt-0">
-               {/* Lucide icons used as fallbacks to ensure successful build */}
                <a href={discordUrl} target="_blank" rel="noreferrer">
                   <MessageSquare size={20} className="hover:text-white transition cursor-pointer" />
                </a>
