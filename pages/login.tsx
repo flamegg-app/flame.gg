@@ -1,69 +1,117 @@
-import React from 'react';
-import { supabase } from '../lib/supabase';
-import { Flame, MessageCircle, Mail } from 'lucide-react';
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { Mail, Lock, EyeOff, Eye, ChevronDown } from 'lucide-react';
+import { FaDiscord, FaGoogle } from 'react-icons/fa';
+
+// Language Selector Component for the Footer
+const LanguageSelector = () => {
+  return (
+    <div className="bg-white/5 border border-white/10 px-5 py-3 rounded-2xl flex items-center justify-between w-52 hover:bg-white/10 transition-all cursor-pointer group">
+      <div className="flex items-center gap-2">
+        <span className="text-[10px] font-black text-neutral-500 uppercase">US</span>
+        <span className="text-[11px] font-black uppercase tracking-widest text-neutral-300">English (US)</span>
+      </div>
+      <ChevronDown size={14} className="text-neutral-500 group-hover:text-white transition-colors" />
+    </div>
+  );
+};
 
 export default function Login() {
-  
-  const handleDiscordLogin = async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'discord',
-      options: {
-        // Redirects to your dashboard after authorization
-        redirectTo: `${window.location.origin}/dashboard`, 
-      },
-    });
-
-    if (error) {
-      console.error('Error logging in with Discord:', error.message);
-    }
-  };
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center font-['Satoshi'] p-6">
-      <div className="w-full max-w-md">
-        {/* Branding */}
-        <div className="flex flex-col items-center mb-10">
-          <div className="bg-purple-600 p-4 rounded-3xl shadow-2xl shadow-purple-600/20 mb-6">
-            <Flame size={40} fill="white" className="text-white" />
+    <div className="min-h-screen bg-[#0a0612] text-white font-['Satoshi',sans-serif] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      
+      {/* Background Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/10 blur-[140px] rounded-full pointer-events-none" />
+
+      {/* Main Login Card */}
+      <div className="w-full max-w-[440px] z-10">
+        <div className="bg-[#110c1d] border border-white/5 rounded-[3rem] p-10 md:p-12 shadow-2xl shadow-black/50">
+          
+          {/* Logo & Header */}
+          <div className="flex flex-col items-center mb-10">
+            <Link href="/">
+              <img src="/logo.webp" alt="scope.gg" className="w-16 h-16 mb-6 object-contain hover:scale-110 transition-transform cursor-pointer" />
+            </Link>
+            <h1 className="text-2xl font-black tracking-tight text-center">Log in to your account</h1>
           </div>
-          <h1 className="text-4xl font-black text-white tracking-tighter">Welcome to flame.gg</h1>
-          <p className="text-neutral-500 mt-2 text-center">
-            Connect your identity and start building your legacy.
+
+          {/* Social Auth Buttons */}
+          <div className="flex flex-col gap-3 mb-8">
+            <button className="w-full bg-[#5865F2] hover:bg-[#4752c4] py-4 rounded-2xl flex items-center justify-center gap-3 font-black text-[14px] transition-all hover:shadow-[0_0_20px_rgba(88,101,242,0.25)] active:scale-[0.98]">
+              <FaDiscord size={20} />
+              <span>Continue with Discord</span>
+            </button>
+
+            <button className="w-full bg-white hover:bg-neutral-200 py-4 rounded-2xl flex items-center justify-center gap-3 font-black text-[14px] text-black transition-all hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] active:scale-[0.98]">
+              <FaGoogle size={18} className="text-[#ea4335]" />
+              <span>Continue with Google</span>
+            </button>
+          </div>
+
+          {/* Divider */}
+          <div className="flex items-center gap-4 mb-8">
+            <div className="h-[1px] flex-1 bg-white/5" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-600">Or use email</span>
+            <div className="h-[1px] flex-1 bg-white/5" />
+          </div>
+
+          {/* Email Form */}
+          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+            <div>
+              <label className="block text-[12px] font-black uppercase tracking-widest text-neutral-500 mb-2.5 ml-1">Email Address</label>
+              <div className="relative group">
+                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-600 group-focus-within:text-purple-500 transition-colors" size={18} />
+                <input 
+                  type="email" 
+                  placeholder="name@example.com" 
+                  className="w-full bg-black/40 border border-white/5 rounded-[1.25rem] py-4 pl-14 pr-4 outline-none focus:border-purple-500/50 focus:bg-black/60 transition-all font-bold text-[14px] placeholder:text-neutral-700"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[12px] font-black uppercase tracking-widest text-neutral-500 mb-2.5 ml-1">Password</label>
+              <div className="relative group">
+                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-600 group-focus-within:text-purple-500 transition-colors" size={18} />
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  placeholder="••••••••" 
+                  className="w-full bg-black/40 border border-white/5 rounded-[1.25rem] py-4 pl-14 pr-14 outline-none focus:border-purple-500/50 focus:bg-black/60 transition-all font-bold text-[14px] placeholder:text-neutral-700"
+                />
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-5 top-1/2 -translate-y-1/2 text-neutral-600 hover:text-white transition-colors"
+                >
+                  {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                </button>
+              </div>
+              <div className="flex justify-end mt-3">
+                <Link href="/forgot" className="text-[12px] font-bold text-neutral-500 hover:text-purple-400 transition">Forgot password?</Link>
+              </div>
+            </div>
+
+            <button className="w-full bg-[#1a0d2d] hover:bg-[#251240] border border-purple-500/20 text-purple-100 py-4 rounded-[1.25rem] font-black text-[15px] transition-all active:scale-[0.98] mt-4 shadow-xl">
+              Login to scope.gg
+            </button>
+          </form>
+
+          {/* Footer Link */}
+          <p className="text-center mt-10 text-[13px] font-bold text-neutral-500">
+            Are you new to scope.gg? {' '}
+            <Link href="/register" className="text-purple-400 hover:text-purple-300 transition underline-offset-4 hover:underline">Create an account</Link>
           </p>
         </div>
 
-        {/* Login Container */}
-        <div className="bg-[#161616] border border-neutral-800 p-8 rounded-[2.5rem] shadow-2xl space-y-4">
-          
-          {/* Discord Button */}
-          <button 
-            onClick={handleDiscordLogin}
-            className="w-full flex items-center justify-center gap-3 bg-[#5865F2] hover:bg-[#4752C4] text-white py-4 rounded-2xl font-black transition-all transform hover:scale-[1.02] active:scale-[0.98]"
-          >
-            <MessageCircle fill="currentColor" size={20} />
-            Continue with Discord
-          </button>
-
-          <div className="relative py-4 flex items-center">
-            <div className="flex-grow border-t border-neutral-800"></div>
-            <span className="flex-shrink mx-4 text-neutral-600 text-[10px] font-black uppercase tracking-widest">or</span>
-            <div className="flex-grow border-t border-neutral-800"></div>
-          </div>
-
-          {/* Email Placeholder (for future use) */}
-          <button 
-            disabled
-            className="w-full flex items-center justify-center gap-3 bg-neutral-800/50 border border-neutral-800 text-neutral-500 py-4 rounded-2xl font-bold cursor-not-allowed"
-          >
-            <Mail size={18} />
-            Email Login (Coming Soon)
-          </button>
+        {/* Bottom Page Footer */}
+        <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-6 opacity-60 hover:opacity-100 transition-opacity">
+          <p className="text-[11px] font-black uppercase tracking-widest text-neutral-500">
+            © 2026 scope.gg
+          </p>
+          <LanguageSelector />
         </div>
-
-        {/* Footer Info */}
-        <p className="text-center text-neutral-600 text-xs mt-8">
-          By continuing, you agree to the flame.gg Terms of Service.
-        </p>
       </div>
     </div>
   );
