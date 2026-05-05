@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import LanguageSelector from '../components/LanguageSelector';
 import { 
-  ChevronDown, 
   Check, 
   Globe, 
   Users, 
@@ -83,10 +83,9 @@ export default function Home() {
           </button>
         </div>
 
-        {/* 3. The New Mockup Showcase - Replicating image_ca823b.jpg */}
+        {/* 3. The New Mockup Showcase */}
         <div className="relative w-full max-w-7xl mx-auto px-4 perspective-1000">
            <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-0 mt-10">
-              {/* Dashboard Preview (Left Skew) */}
               <div className="relative z-20 w-full md:w-[60%] transform md:-rotate-y-12 md:rotate-x-6 md:hover:rotate-0 transition-transform duration-700">
                 <img 
                   src="/dashboard-mockup.png" 
@@ -95,7 +94,6 @@ export default function Home() {
                 />
               </div>
 
-              {/* Profile Previews (Right Side Stack) */}
               <div className="relative z-10 w-full md:w-[40%] flex justify-center -mt-10 md:mt-0 md:-ml-20">
                  <img 
                    src="/profile-mockup.png" 
@@ -109,7 +107,6 @@ export default function Home() {
                  />
               </div>
            </div>
-           {/* Bottom Fade out for the images */}
            <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#0a0612] to-transparent z-30" />
         </div>
       </header>
@@ -225,10 +222,9 @@ export default function Home() {
                   </div>
                </div>
                <p className="text-neutral-500 text-sm font-bold mb-8 max-w-xs leading-relaxed">Create feature-rich, customizable and modern link-in-bio pages with scope.gg.</p>
-               <div className="bg-white/5 border border-white/10 px-5 py-3 rounded-2xl flex items-center justify-between w-48">
-                 <span className="text-[11px] font-black uppercase tracking-widest text-neutral-300">🇺🇸 English (US)</span>
-                 <ChevronDown size={14} className="text-neutral-500" />
-               </div>
+               
+               {/* Language Selector Integrated Here */}
+               <LanguageSelector />
             </div>
             
             {[
