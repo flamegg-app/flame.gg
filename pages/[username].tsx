@@ -30,13 +30,13 @@ export default function UserProfile() {
     setLoading(false);
   }
 
-  if (loading) return <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center"><Flame className="text-purple-600 animate-pulse" size={48} fill="currentColor" /></div>;
+  if (loading) return <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center"><Icons.Flame className="text-purple-600 animate-pulse" size={48} fill="currentColor" /></div>;
 
   // BAN CHECK: If you banned them in the Admin Panel, their page won't show
   if (!profile || profile.is_banned) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center justify-center p-6 text-center">
-        <AlertTriangle size={64} className="text-red-500 mb-6" />
+        <Icons.AlertTriangle size={64} className="text-red-500 mb-6" />
         <h1 className="text-4xl font-black tracking-tighter mb-2">Account Unavailable</h1>
         <p className="text-neutral-500 max-w-sm">This account has been suspended or does not exist.</p>
         <button onClick={() => router.push('/')} className="mt-8 text-purple-500 font-bold text-sm hover:underline tracking-widest uppercase">Return to flame.gg</button>
@@ -77,7 +77,7 @@ export default function UserProfile() {
             <h1 className="text-4xl font-black tracking-tighter">{profile.display_name}</h1>
             {profile.subscription_tier === 'legendary' && (
               <div className="bg-gradient-to-tr from-yellow-400 to-orange-500 p-1 rounded-full shadow-lg" title="Legendary Member">
-                <Flame size={14} className="text-black" fill="currentColor" />
+                <Icons.Flame size={14} className="text-black" fill="currentColor" />
               </div>
             )}
           </div>
@@ -109,7 +109,7 @@ export default function UserProfile() {
         {/* Branding Footer */}
         <div className="mt-10 flex flex-col items-center opacity-40">
            <div className="flex items-center gap-2 mb-1">
-              <Flame size={12} fill="currentColor" className="text-purple-500" />
+              <Icons.Flame size={12} fill="currentColor" className="text-purple-500" />
               <span className="text-[10px] font-black uppercase tracking-[0.3em]">flame.gg</span>
            </div>
            <p className="text-[10px] font-bold">Create your own profile today.</p>
