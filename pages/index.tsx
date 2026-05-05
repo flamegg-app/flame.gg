@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { 
   ChevronDown, 
   Check, 
@@ -15,11 +16,31 @@ import {
 
 export default function Home() {
   const [username, setUsername] = useState('');
+  const router = useRouter();
+
+  // Function to handle the "Claim Now" logic
+  const handleClaim = (e: React.FormEvent, customUser?: string) => {
+    e.preventDefault();
+    const userToClaim = customUser || username;
+    if (userToClaim) {
+      router.push(`/register?username=${encodeURIComponent(userToClaim)}`);
+    } else {
+      router.push('/register');
+    }
+  };
+
+  // Smooth scroll function for the "View Pricing" button
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#050505] text-white font-['Satoshi',sans-serif] selection:bg-purple-500/30 overflow-x-hidden">
       
-      {/* 1. Header Navigation - Replicating image_cbee18.jpg */}
+      {/* 1. Header Navigation */}
       <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-6xl z-50 bg-black/40 backdrop-blur-md border border-white/5 py-3 px-8 rounded-full flex items-center justify-between">
         <div className="flex items-center gap-2">
           <img src="/logo.png" alt="Logo" className="w-7 h-7 object-contain" />
@@ -27,17 +48,17 @@ export default function Home() {
         </div>
         
         <div className="hidden md:flex items-center gap-8 text-[13px] font-bold text-neutral-400">
-          <Link href="#" className="hover:text-white transition">Help Center</Link>
-          <Link href="#" className="hover:text-white transition">Discord</Link>
-          <Link href="#" className="hover:text-white transition">Leaderboard</Link>
-          <Link href="#" className="hover:text-white transition">Pricing</Link>
+          <Link href="/help" className="hover:text-white transition">Help Center</Link>
+          <a href="https://discord.gg/ro-market" target="_blank" rel="noreferrer" className="hover:text-white transition">Discord</a>
+          <Link href="/leaderboard" className="hover:text-white transition">Leaderboard</Link>
+          <button onClick={() => scrollToSection('pricing')} className="hover:text-white transition">Pricing</button>
           <Link href="/dashboard" className="bg-[#2a1a3a] text-[#d8b4fe] border border-purple-500/20 px-6 py-2 rounded-full font-black hover:bg-[#3b2a4a] transition">
             Dashboard
           </Link>
         </div>
       </nav>
 
-      {/* 2. Hero Section - Replicating image_cbeada.jpg */}
+      {/* 2. Hero Section */}
       <header className="pt-52 pb-32 px-6 flex flex-col items-center text-center relative">
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none select-none flex flex-wrap justify-center gap-20 p-20 scale-150 rotate-12">
            {[...Array(20)].map((_, i) => <img key={i} src="/logo.png" className="w-20 h-20 grayscale" alt="" />)}
@@ -50,16 +71,22 @@ export default function Home() {
           flame.gg is your go-to for modern, feature-rich link-in-bio pages and fast, secure file hosting.
         </p>
         <div className="flex flex-wrap justify-center gap-4 relative z-10">
-          <button className="bg-[#4c1d95] hover:bg-[#5b21b6] px-10 py-4 rounded-full font-black transition-all shadow-xl shadow-purple-900/20">
+          <button 
+            onClick={() => router.push('/register')}
+            className="bg-[#4c1d95] hover:bg-[#5b21b6] px-10 py-4 rounded-full font-black transition-all shadow-xl shadow-purple-900/20 active:scale-95"
+          >
             Sign Up for Free
           </button>
-          <button className="bg-white/5 hover:bg-white/10 border border-white/10 px-10 py-4 rounded-full font-black transition-all">
+          <button 
+            onClick={() => scrollToSection('pricing')}
+            className="bg-white/5 hover:bg-white/10 border border-white/10 px-10 py-4 rounded-full font-black transition-all active:scale-95"
+          >
             View Pricing
           </button>
         </div>
       </header>
 
-      {/* 3. Stats Grid - Replicating image_cbeddf.png */}
+      {/* 3. Stats Grid */}
       <section className="py-24 px-6 max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-black mb-6">
@@ -85,10 +112,13 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Claim Input - Replicating image_cbeddf.png */}
+        {/* Claim Input */}
         <div className="mt-20 flex flex-col items-center">
           <p className="text-neutral-400 font-bold mb-6 text-sm">Claim your profile and create an account in minutes!</p>
-          <div className="bg-[#0c0c0c] border border-white/10 p-1.5 rounded-2xl flex w-full max-w-md focus-within:border-purple-500/50 transition-all shadow-2xl">
+          <form 
+            onSubmit={(e) => handleClaim(e)}
+            className="bg-[#0c0c0c] border border-white/10 p-1.5 rounded-2xl flex w-full max-w-md focus-within:border-purple-500/50 transition-all shadow-2xl"
+          >
             <span className="pl-5 pr-3 py-3 text-neutral-600 font-bold border-r border-white/5">flame.gg/</span>
             <input 
               type="text" 
@@ -97,15 +127,15 @@ export default function Home() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
-            <button className="bg-[#2a1a3a] text-[#d8b4fe] px-8 py-3 rounded-xl font-black text-xs hover:bg-[#3b2a4a] transition">
+            <button type="submit" className="bg-[#2a1a3a] text-[#d8b4fe] px-8 py-3 rounded-xl font-black text-xs hover:bg-[#3b2a4a] transition">
               Claim Now
             </button>
-          </div>
+          </form>
         </div>
       </section>
 
-      {/* 4. Pricing - Replicating image_cbedbd.png */}
-      <section className="py-32 px-6 bg-[#080808]">
+      {/* 4. Pricing (Added ID for scrolling) */}
+      <section id="pricing" className="py-32 px-6 bg-[#080808]">
         <h2 className="text-4xl font-black text-center mb-20 tracking-tight">
           Explore our exclusive plans and join <span className="text-purple-400">48,100+</span> subscribers
         </h2>
@@ -120,7 +150,7 @@ export default function Home() {
                 </li>
               ))}
             </ul>
-            <button className="w-full py-4 bg-white/5 rounded-2xl font-black">Get Started</button>
+            <button onClick={() => router.push('/register')} className="w-full py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-black transition">Get Started</button>
           </div>
 
           <div className="bg-[#110c1a] border border-purple-500/20 p-12 rounded-[3rem] relative shadow-2xl">
@@ -135,12 +165,12 @@ export default function Home() {
                 </li>
               ))}
             </ul>
-            <button className="w-full py-4 bg-purple-600 rounded-2xl font-black shadow-lg shadow-purple-900/40">Learn More</button>
+            <button onClick={() => router.push('/premium')} className="w-full py-4 bg-purple-600 hover:bg-purple-500 rounded-2xl font-black shadow-lg shadow-purple-900/40 transition">Learn More</button>
           </div>
         </div>
       </section>
 
-      {/* 5. Footer - Replicating image_cbeada.jpg */}
+      {/* 5. Footer */}
       <footer className="pt-32 pb-16 px-6 border-t border-white/5">
         <div className="max-w-6xl mx-auto">
           <div className="bg-[#120c1a] border border-purple-500/10 p-16 rounded-[3.5rem] mb-24 flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
@@ -150,7 +180,7 @@ export default function Home() {
                <div className="flex bg-black/40 border border-white/5 p-1.5 rounded-2xl max-w-sm mx-auto md:mx-0">
                   <span className="pl-4 pr-2 py-3 text-neutral-600 font-bold text-sm">flame.gg/</span>
                   <input type="text" placeholder="username" className="bg-transparent outline-none flex-1 font-bold text-sm text-white" />
-                  <button className="bg-purple-600 px-6 py-2 rounded-xl text-[11px] font-black uppercase tracking-tighter">Claim Now</button>
+                  <button onClick={(e) => handleClaim(e)} className="bg-purple-600 px-6 py-2 rounded-xl text-[11px] font-black uppercase tracking-tighter hover:bg-purple-500 transition">Claim Now</button>
                </div>
              </div>
              <img src="/logo.png" className="absolute -right-16 top-0 h-full opacity-5 pointer-events-none grayscale" alt="" />
@@ -174,15 +204,21 @@ export default function Home() {
             </div>
             
             {[
-              { title: 'General', links: ['Login', 'Sign Up', 'Pricing', 'Leaderboard'] },
-              { title: 'Contact', links: ['Discord Server', 'Support Email', 'Business Email'] },
-              { title: 'Legal', links: ['Terms of Service', 'Privacy Policy', 'Copyright Policy'] }
+              { title: 'General', links: [{ n: 'Login', h: '/login' }, { n: 'Sign Up', h: '/register' }, { n: 'Pricing', h: '#pricing' }, { n: 'Leaderboard', h: '/leaderboard' }] },
+              { title: 'Contact', links: [{ n: 'Discord Server', h: 'https://discord.gg/ro-market' }, { n: 'Support Email', h: 'mailto:support@flame.gg' }] },
+              { title: 'Legal', links: [{ n: 'Terms of Service', h: '/tos' }, { n: 'Privacy Policy', h: '/privacy' }] }
             ].map((col) => (
               <div key={col.title}>
                 <h4 className="font-black text-xs uppercase tracking-widest mb-8 text-neutral-300">{col.title}</h4>
                 <ul className="space-y-4">
                   {col.links.map(l => (
-                    <li key={l}><Link href="#" className="text-neutral-500 hover:text-white transition text-[13px] font-bold">{l}</Link></li>
+                    <li key={l.n}>
+                      {l.h.startsWith('#') ? (
+                        <button onClick={() => scrollToSection(l.h.substring(1))} className="text-neutral-500 hover:text-white transition text-[13px] font-bold">{l.n}</button>
+                      ) : (
+                        <Link href={l.h} className="text-neutral-500 hover:text-white transition text-[13px] font-bold">{l.n}</Link>
+                      )}
+                    </li>
                   ))}
                 </ul>
               </div>
