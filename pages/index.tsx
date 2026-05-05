@@ -18,7 +18,6 @@ export default function Home() {
   const [username, setUsername] = useState('');
   const router = useRouter();
 
-  // Function to handle the "Claim Now" logic
   const handleClaim = (e: React.FormEvent, customUser?: string) => {
     e.preventDefault();
     const userToClaim = customUser || username;
@@ -29,7 +28,6 @@ export default function Home() {
     }
   };
 
-  // Smooth scroll function for the "View Pricing" button
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -43,8 +41,8 @@ export default function Home() {
       {/* 1. Header Navigation */}
       <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-6xl z-50 bg-black/40 backdrop-blur-md border border-white/5 py-3 px-8 rounded-full flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="Logo" className="w-7 h-7 object-contain" />
-          <span className="text-xl font-black tracking-tighter">flame.gg</span>
+          <img src="/logo.webp" alt="Logo" className="w-7 h-7 object-contain" />
+          <span className="text-xl font-black tracking-tighter">scope.gg</span>
         </div>
         
         <div className="hidden md:flex items-center gap-8 text-[13px] font-bold text-neutral-400">
@@ -58,17 +56,20 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* 2. Hero Section */}
-      <header className="pt-52 pb-32 px-6 flex flex-col items-center text-center relative">
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none select-none flex flex-wrap justify-center gap-20 p-20 scale-150 rotate-12">
-           {[...Array(20)].map((_, i) => <img key={i} src="/logo.png" className="w-20 h-20 grayscale" alt="" />)}
+      {/* 2. Hero Section with Floating Logo Background (Replicating Reference) */}
+      <header className="pt-52 pb-32 px-6 flex flex-col items-center text-center relative overflow-hidden">
+        {/* Background Pattern Layer */}
+        <div className="absolute inset-0 opacity-[0.04] pointer-events-none select-none flex flex-wrap justify-center gap-24 p-20 scale-125 -rotate-12">
+           {[...Array(30)].map((_, i) => (
+             <img key={i} src="/logo.webp" className="w-24 h-24 grayscale" alt="" />
+           ))}
         </div>
 
         <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight relative z-10">
           Everything you want, right here.
         </h1>
         <p className="text-neutral-400 text-lg md:text-xl mb-12 max-w-2xl font-medium relative z-10 leading-relaxed">
-          flame.gg is your go-to for modern, feature-rich link-in-bio pages and fast, secure file hosting.
+          scope.gg is your go-to for modern, feature-rich link-in-bio pages and fast, secure file hosting.
         </p>
         <div className="flex flex-wrap justify-center gap-4 relative z-10">
           <button 
@@ -90,10 +91,10 @@ export default function Home() {
       <section className="py-24 px-6 max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-black mb-6">
-            Over <span className="text-purple-500">1,740,000</span> people use flame.gg
+            Over <span className="text-purple-500">1,740,000</span> people use scope.gg
           </h2>
           <p className="text-neutral-500 font-bold text-lg max-w-3xl mx-auto leading-relaxed">
-            Create feature-rich, customizable and modern link-in-bio pages, along with fast and secure file hosting, all with flame.gg.
+            Create feature-rich, customizable and modern link-in-bio pages, along with fast and secure file hosting, all with scope.gg.
           </p>
         </div>
 
@@ -119,7 +120,7 @@ export default function Home() {
             onSubmit={(e) => handleClaim(e)}
             className="bg-[#0c0c0c] border border-white/10 p-1.5 rounded-2xl flex w-full max-w-md focus-within:border-purple-500/50 transition-all shadow-2xl"
           >
-            <span className="pl-5 pr-3 py-3 text-neutral-600 font-bold border-r border-white/5">flame.gg/</span>
+            <span className="pl-5 pr-3 py-3 text-neutral-600 font-bold border-r border-white/5">scope.gg/</span>
             <input 
               type="text" 
               placeholder="username" 
@@ -134,7 +135,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. Pricing (Added ID for scrolling) */}
+      {/* 4. Pricing */}
       <section id="pricing" className="py-32 px-6 bg-[#080808]">
         <h2 className="text-4xl font-black text-center mb-20 tracking-tight">
           Explore our exclusive plans and join <span className="text-purple-400">48,100+</span> subscribers
@@ -176,27 +177,27 @@ export default function Home() {
           <div className="bg-[#120c1a] border border-purple-500/10 p-16 rounded-[3.5rem] mb-24 flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
              <div className="relative z-10 text-center md:text-left">
                <h2 className="text-5xl font-black mb-6 leading-tight">Everything you want, <br/>right here.</h2>
-               <p className="text-neutral-400 font-bold mb-10 max-w-lg">Join over 1,740,000+ people using flame.gg and become part of our large community.</p>
+               <p className="text-neutral-400 font-bold mb-10 max-w-lg">Join over 1,740,000+ people using scope.gg and become part of our large community.</p>
                <div className="flex bg-black/40 border border-white/5 p-1.5 rounded-2xl max-w-sm mx-auto md:mx-0">
-                  <span className="pl-4 pr-2 py-3 text-neutral-600 font-bold text-sm">flame.gg/</span>
+                  <span className="pl-4 pr-2 py-3 text-neutral-600 font-bold text-sm">scope.gg/</span>
                   <input type="text" placeholder="username" className="bg-transparent outline-none flex-1 font-bold text-sm text-white" />
                   <button onClick={(e) => handleClaim(e)} className="bg-purple-600 px-6 py-2 rounded-xl text-[11px] font-black uppercase tracking-tighter hover:bg-purple-500 transition">Claim Now</button>
                </div>
              </div>
-             <img src="/logo.png" className="absolute -right-16 top-0 h-full opacity-5 pointer-events-none grayscale" alt="" />
+             <img src="/logo.webp" className="absolute -right-16 top-0 h-full opacity-5 pointer-events-none grayscale" alt="" />
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-12 mb-20 text-left">
             <div className="col-span-2">
                <div className="flex items-center gap-2 mb-6">
-                  <img src="/logo.png" className="w-7 h-7" alt="Logo" />
-                  <span className="text-2xl font-black tracking-tighter">flame.gg</span>
+                  <img src="/logo.webp" className="w-7 h-7" alt="Logo" />
+                  <span className="text-2xl font-black tracking-tighter">scope.gg</span>
                   <div className="flex items-center gap-2 bg-yellow-500/10 px-3 py-1 rounded-md text-[10px] text-yellow-500 font-black uppercase ml-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
                     System Status
                   </div>
                </div>
-               <p className="text-neutral-500 text-sm font-bold mb-8 max-w-xs leading-relaxed">Create feature-rich, customizable and modern link-in-bio pages with flame.gg.</p>
+               <p className="text-neutral-500 text-sm font-bold mb-8 max-w-xs leading-relaxed">Create feature-rich, customizable and modern link-in-bio pages with scope.gg.</p>
                <div className="bg-white/5 border border-white/10 px-5 py-3 rounded-2xl flex items-center justify-between w-48">
                  <span className="text-[11px] font-black uppercase tracking-widest">🇺🇸 English (US)</span>
                  <ChevronDown size={14} className="text-neutral-500" />
@@ -205,7 +206,7 @@ export default function Home() {
             
             {[
               { title: 'General', links: [{ n: 'Login', h: '/login' }, { n: 'Sign Up', h: '/register' }, { n: 'Pricing', h: '#pricing' }, { n: 'Leaderboard', h: '/leaderboard' }] },
-              { title: 'Contact', links: [{ n: 'Discord Server', h: 'https://discord.gg/ro-market' }, { n: 'Support Email', h: 'mailto:support@flame.gg' }] },
+              { title: 'Contact', links: [{ n: 'Discord Server', h: 'https://discord.gg/ro-market' }, { n: 'Support Email', h: 'mailto:support@scope.gg' }] },
               { title: 'Legal', links: [{ n: 'Terms of Service', h: '/tos' }, { n: 'Privacy Policy', h: '/privacy' }] }
             ].map((col) => (
               <div key={col.title}>
@@ -226,7 +227,7 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col md:flex-row items-center justify-between pt-12 border-t border-white/5">
-             <p className="text-neutral-600 text-[11px] font-black uppercase tracking-widest">Copyright © 2026 flame.gg - All Rights Reserved.</p>
+             <p className="text-neutral-600 text-[11px] font-black uppercase tracking-widest">Copyright © 2026 scope.gg - All Rights Reserved.</p>
              <div className="flex items-center gap-8 text-neutral-600 mt-8 md:mt-0">
                <MessageSquare size={20} className="hover:text-white transition cursor-pointer" />
                <Mail size={20} className="hover:text-white transition cursor-pointer" />
