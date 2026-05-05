@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { supabase } from '../lib/supabase';
-import { Flame, Instagram, Twitter, Github, Youtube, AlertTriangle } from 'lucide-react';
+import { Flame, Twitter, Youtube, AlertTriangle, Instagram, Github } from 'lucide-react';
 
 export default function UserProfile() {
   const router = useRouter();
