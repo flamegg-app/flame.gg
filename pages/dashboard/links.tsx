@@ -1,19 +1,16 @@
 import React from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
-// @ts-ignore
-import { 
-  Twitter as TwitterIcon, 
-  Disc as DiscIcon, 
-  Globe, 
-  Mail, 
-  Save 
-} from 'lucide-react';
-
-// Fallback logic in case 'Twitter' or 'Disc' are completely missing in your version
-const Twitter = TwitterIcon || Globe; 
-const Discord = DiscIcon || Globe;
+import * as Lucide from 'lucide-react';
 
 export default function SocialLinks() {
+  // Safe icon retrieval to prevent build crashes
+  // @ts-ignore
+  const Twitter = Lucide.Twitter || Lucide.X || Lucide.Globe;
+  // @ts-ignore
+  const Discord = Lucide.Disc || Lucide.MessageSquare || Lucide.Globe;
+  const Mail = Lucide.Mail;
+  const Save = Lucide.Save;
+
   return (
     <DashboardLayout>
       <div className="max-w-2xl mx-auto">
@@ -26,7 +23,7 @@ export default function SocialLinks() {
             <Twitter className="text-blue-400" size={20} />
             <input 
               type="text" 
-              placeholder="Twitter Username" 
+              placeholder="Twitter/X Username" 
               className="bg-transparent border-none outline-none flex-1 text-sm font-bold text-white"
             />
           </div>
