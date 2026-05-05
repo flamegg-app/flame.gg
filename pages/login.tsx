@@ -1,75 +1,22 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Mail, Lock, EyeOff, Eye, ChevronDown } from 'lucide-react';
+import { signIn } from "next-auth/react";
+import { Mail, Lock, EyeOff, Eye } from 'lucide-react';
 import { FaDiscord, FaGoogle } from 'react-icons/fa';
-
-const LanguageSelector = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState({ code: 'US', name: 'English (US)' });
-
-  const languages = [
-    { code: 'US', name: 'English (US)' },
-    { code: 'UK', name: 'English (UK)' },
-    { code: 'FR', name: 'Français' },
-    { code: 'DE', name: 'Deutsch' },
-  ];
-
-  return (
-    <div className="relative">
-      {/* Trigger Button */}
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="bg-white/5 border border-white/10 px-5 py-3 rounded-2xl flex items-center justify-between w-52 hover:bg-white/10 transition-all active:scale-95 group z-20"
-      >
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-black text-neutral-500 uppercase">{selected.code}</span>
-          <span className="text-[11px] font-black uppercase tracking-widest text-neutral-300 group-hover:text-white transition-colors">
-            {selected.name}
-          </span>
-        </div>
-        <ChevronDown 
-          size={14} 
-          className={`text-neutral-500 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} 
-        />
-      </button>
-
-      {/* Actual Dropdown Menu */}
-      {isOpen && (
-        <>
-          {/* Overlay to close when clicking outside */}
-          <div className="fixed inset-0 z-30" onClick={() => setIsOpen(false)} />
-          
-          <div className="absolute bottom-full mb-3 left-0 w-full bg-[#160d21] border border-white/10 rounded-2xl overflow-hidden shadow-2xl z-40 animate-in fade-in slide-in-from-bottom-2">
-            {languages.map((lang) => (
-              <button
-                key={lang.code}
-                type="button"
-                onClick={() => {
-                  setSelected(lang);
-                  setIsOpen(false);
-                }}
-                className="w-full px-5 py-3 flex items-center justify-between hover:bg-purple-600/20 transition-colors group text-left"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-black text-neutral-600 uppercase group-hover:text-purple-400">
-                    {lang.code}
-                  </span>
-                  <span className="text-[11px] font-black uppercase tracking-widest text-neutral-400 group-hover:text-white">
-                    {lang.name}
-                  </span>
-                </div>
-              </button>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  );
-};
+import LanguageSelector from '../components/LanguageSelector';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+
+  // This function handles the Google Sign-In logic
+  const handleGoogleLogin = async () => {
+    try {
+      // The callbackUrl is where the user goes AFTER successful login
+      await signIn('google', { callbackUrl: '/dashboard' });
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#0a0612] text-white font-['Satoshi',sans-serif] flex flex-col items-center justify-center p-6 relative overflow-hidden">
@@ -91,12 +38,21 @@ export default function Login() {
 
           {/* Social Auth Buttons */}
           <div className="flex flex-col gap-3 mb-8">
-            <button className="w-full bg-[#5865F2] hover:bg-[#4752c4] py-4 rounded-2xl flex items-center justify-center gap-3 font-black text-[14px] transition-all hover:shadow-[0_0_20px_rgba(88,101,242,0.25)] active:scale-[0.98]">
+            {/* Discord Button */}
+            <button 
+              type="button"
+              className="w-full bg-[#5865F2] hover:bg-[#4752c4] py-4 rounded-2xl flex items-center justify-center gap-3 font-black text-[14px] transition-all hover:shadow-[0_0_20px_rgba(88,101,242,0.25)] active:scale-[0.98]"
+            >
               <FaDiscord size={20} />
               <span>Continue with Discord</span>
             </button>
 
-            <button className="w-full bg-white hover:bg-neutral-200 py-4 rounded-2xl flex items-center justify-center gap-3 font-black text-[14px] text-black transition-all hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] active:scale-[0.98]">
+            {/* Google Button - Logic Added Here */}
+            <button 
+              type="button"
+              onClick={handleGoogleLogin}
+              className="w-full bg-white hover:bg-neutral-200 py-4 rounded-2xl flex items-center justify-center gap-3 font-black text-[14px] text-black transition-all hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] active:scale-[0.98]"
+            >
               <FaGoogle size={18} className="text-[#ea4335]" />
               <span>Continue with Google</span>
             </button>
@@ -145,7 +101,7 @@ export default function Login() {
               </div>
             </div>
 
-            <button className="w-full bg-[#1a0d2d] hover:bg-[#251240] border border-purple-500/20 text-purple-100 py-4 rounded-[1.25rem] font-black text-[15px] transition-all active:scale-[0.98] mt-4 shadow-xl">
+            <button type="submit" className="w-full bg-[#1a0d2d] hover:bg-[#251240] border border-purple-500/20 text-purple-100 py-4 rounded-[1.25rem] font-black text-[15px] transition-all active:scale-[0.98] mt-4 shadow-xl">
               Login to scope.gg
             </button>
           </form>
@@ -158,7 +114,7 @@ export default function Login() {
         </div>
 
         {/* Bottom Page Footer */}
-        <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-6 opacity-60 hover:opacity-100 transition-opacity">
+        <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-6 opacity-60 hover:opacity-100 transition-opacity text-center md:text-left">
           <p className="text-[11px] font-black uppercase tracking-widest text-neutral-500">
             © 2026 scope.gg
           </p>
