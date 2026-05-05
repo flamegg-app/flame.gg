@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { supabase } from '../lib/supabase';
-import { Flame, Twitter, Youtube, AlertTriangle, Instagram, Github } from 'lucide-react';
+import * as Icons from 'lucide-react';
 
 export default function UserProfile() {
   const router = useRouter();
@@ -98,10 +98,10 @@ export default function UserProfile() {
 
             {/* Social Icons */}
             <div className="flex gap-6 mt-8">
-              <Instagram size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
-              <Twitter size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
-              <Github size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
-              <Youtube size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
+              <Icons.Instagram size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
+              <Icons.Twitter size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
+              <Icons.Github size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
+              <Icons.Youtube size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
             </div>
           </div>
         </div>
