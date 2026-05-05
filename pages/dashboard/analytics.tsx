@@ -1,3 +1,15 @@
+import DashboardLayout from '../../components/DashboardLayout';
+import { Eye, MousePointer2, TrendingUp, Calendar } from 'lucide-react';
+
+export default function Analytics() {
+  return (
+    <DashboardLayout>
+      <h1 className="text-3xl font-black tracking-tighter mb-8">Analytics</h1>
+      {/* ... the rest of your analytics cards ... */}
+    </DashboardLayout>
+  );
+}
+
 import React from 'react';
 import { Eye, MousePointer2, TrendingUp, Calendar } from 'lucide-react';
 
