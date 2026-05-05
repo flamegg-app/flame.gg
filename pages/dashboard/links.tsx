@@ -1,36 +1,28 @@
 import React from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
-import * as Lucide from 'lucide-react';
+import { Globe, MessageSquare, Mail, Save, Share2 } from 'lucide-react';
 
 export default function SocialLinks() {
-  // Safe icon retrieval to prevent build crashes
-  // @ts-ignore
-  const Twitter = Lucide.Twitter || Lucide.X || Lucide.Globe;
-  // @ts-ignore
-  const Discord = Lucide.Disc || Lucide.MessageSquare || Lucide.Globe;
-  const Mail = Lucide.Mail;
-  const Save = Lucide.Save;
-
   return (
     <DashboardLayout>
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto font-['Satoshi']">
         <h1 className="text-3xl font-black tracking-tighter mb-2">Social Links</h1>
         <p className="text-neutral-500 mb-8 font-medium">Connect your socials to your profile.</p>
         
         <div className="space-y-4">
-          {/* Twitter/X Input */}
+          {/* X / Twitter Replacement */}
           <div className="bg-[#111] border border-white/10 p-6 rounded-2xl flex items-center gap-4">
-            <Twitter className="text-blue-400" size={20} />
+            <Share2 className="text-blue-400" size={20} />
             <input 
               type="text" 
-              placeholder="Twitter/X Username" 
+              placeholder="X (Twitter) Username" 
               className="bg-transparent border-none outline-none flex-1 text-sm font-bold text-white"
             />
           </div>
 
-          {/* Discord Input */}
+          {/* Discord Replacement */}
           <div className="bg-[#111] border border-white/10 p-6 rounded-2xl flex items-center gap-4">
-            <Discord className="text-indigo-400" size={20} />
+            <MessageSquare className="text-indigo-400" size={20} />
             <input 
               type="text" 
               placeholder="Discord Username" 
