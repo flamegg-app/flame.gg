@@ -3,20 +3,15 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { supabase } from '../lib/supabase';
 // @ts-ignore
-import { Flame, Info, Mail, Share, Globe, AlertTriangle } from 'lucide-react';
+import { Flame, Info, Mail, Share, Globe, AlertTriangle as AlertTriangleIcon } from 'lucide-react';
 
 const FlameIcon = Flame;
-const Github = Info;        // Fallback to an 'Info' circle
-const Youtube = Mail;        // Fallback to a 'Mail' icon
-const AlertTriangle = AlertTriangle;
-const Twitter = Share;       // Fallback to a 'Share' arrow
-const Instagram = Globe;     // Fallback to a 'Globe'
-
-export default function UserProfile() {
-  const router = useRouter();
-  const { username } = router.query;
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+const Github = Info;
+const Youtube = Mail;
+const Twitter = Share;
+const Instagram = Globe;
+// This solves the "used before declaration" error:
+const AlertTriangle = AlertTriangleIcon;
 
   useEffect(() => {
     if (username) fetchProfile();
