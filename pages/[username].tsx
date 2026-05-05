@@ -4,19 +4,19 @@ import Head from 'next/head';
 import { supabase } from '../lib/supabase';
 import { 
   Flame as FlameIcon, 
-  Instagram as InstagramIcon, 
   Twitter as TwitterIcon, 
   Github as GithubIcon, 
   Youtube as YoutubeIcon, 
-  AlertTriangle as AlertTriangleIcon 
+  AlertTriangle as AlertTriangleIcon,
+  Link as InstagramIcon 
 } from 'lucide-react';
 
 const Flame = FlameIcon;
-const Instagram = InstagramIcon;
 const Twitter = TwitterIcon;
 const Github = GithubIcon;
 const Youtube = YoutubeIcon;
 const AlertTriangle = AlertTriangleIcon;
+const Instagram = InstagramIcon;
 
 export default function UserProfile() {
   const router = useRouter();
