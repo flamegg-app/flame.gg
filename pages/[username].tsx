@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { supabase } from '../lib/supabase';
-import * as Icons from 'lucide-react';
+import Flame from 'lucide-react/dist/esm/icons/flame';
+import Instagram from 'lucide-react/dist/esm/icons/instagram';
+import Twitter from 'lucide-react/dist/esm/icons/twitter';
+import Github from 'lucide-react/dist/esm/icons/github';
+import Youtube from 'lucide-react/dist/esm/icons/youtube';
+import AlertTriangle from 'lucide-react/dist/esm/icons/alert-triangle';
 
 export default function UserProfile() {
   const router = useRouter();
@@ -30,13 +35,13 @@ export default function UserProfile() {
     setLoading(false);
   }
 
-  if (loading) return <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center"><Icons.FlameIcon className="text-purple-600 animate-pulse" size={48} fill="currentColor" /></div>;
+  if (loading) return <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center"><Flame className="text-purple-600 animate-pulse" size={48} fill="currentColor" /></div>;
 
   // BAN CHECK: If you banned them in the Admin Panel, their page won't show
   if (!profile || profile.is_banned) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center justify-center p-6 text-center">
-        <Icons.AlertTriangleIcon size={64} className="text-red-500 mb-6" />
+        <AlertTriangle size={64} className="text-red-500 mb-6" />
         <h1 className="text-4xl font-black tracking-tighter mb-2">Account Unavailable</h1>
         <p className="text-neutral-500 max-w-sm">This account has been suspended or does not exist.</p>
         <button onClick={() => router.push('/')} className="mt-8 text-purple-500 font-bold text-sm hover:underline tracking-widest uppercase">Return to flame.gg</button>
@@ -77,7 +82,7 @@ export default function UserProfile() {
             <h1 className="text-4xl font-black tracking-tighter">{profile.display_name}</h1>
             {profile.subscription_tier === 'legendary' && (
               <div className="bg-gradient-to-tr from-yellow-400 to-orange-500 p-1 rounded-full shadow-lg" title="Legendary Member">
-                <Icons.FlameIcon size={14} className="text-black" fill="currentColor" />
+                <Flame size={14} className="text-black" fill="currentColor" />
               </div>
             )}
           </div>
@@ -98,10 +103,10 @@ export default function UserProfile() {
 
             {/* Social Icons */}
             <div className="flex gap-6 mt-8">
-              <Icons.InstagramIcon size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
-              <Icons.TwitterIcon size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
-              <Icons.GithubIcon size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
-              <Icons.YoutubeIcon size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
+              <Instagram size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
+              <Twitter size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
+              <Github size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
+              <Youtube size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
             </div>
           </div>
         </div>
@@ -109,7 +114,7 @@ export default function UserProfile() {
         {/* Branding Footer */}
         <div className="mt-10 flex flex-col items-center opacity-40">
            <div className="flex items-center gap-2 mb-1">
-              <Icons.FlameIcon size={12} fill="currentColor" className="text-purple-500" />
+              <Flame size={12} fill="currentColor" className="text-purple-500" />
               <span className="text-[10px] font-black uppercase tracking-[0.3em]">flame.gg</span>
            </div>
            <p className="text-[10px] font-bold">Create your own profile today.</p>
