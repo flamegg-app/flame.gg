@@ -2,12 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { supabase } from '../lib/supabase';
-import Flame from 'lucide-react/dist/esm/icons/flame';
-import Instagram from 'lucide-react/dist/esm/icons/instagram';
-import Twitter from 'lucide-react/dist/esm/icons/twitter';
-import Github from 'lucide-react/dist/esm/icons/github';
-import Youtube from 'lucide-react/dist/esm/icons/youtube';
-import AlertTriangle from 'lucide-react/dist/esm/icons/alert-triangle';
+import { 
+  Flame as FlameIcon, 
+  Instagram as InstagramIcon, 
+  Twitter as TwitterIcon, 
+  Github as GithubIcon, 
+  Youtube as YoutubeIcon, 
+  AlertTriangle as AlertTriangleIcon 
+} from 'lucide-react';
+
+const Flame = FlameIcon;
+const Instagram = InstagramIcon;
+const Twitter = TwitterIcon;
+const Github = GithubIcon;
+const Youtube = YoutubeIcon;
+const AlertTriangle = AlertTriangleIcon;
 
 export default function UserProfile() {
   const router = useRouter();
