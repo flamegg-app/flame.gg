@@ -1,139 +1,161 @@
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { Flame, Search, ChevronRight } from 'lucide-react';
+import React from 'react';
+import { useSession, signOut } from "next-auth/react";
+import { 
+  User, Hash, Eye, Edit3, Settings, 
+  LogOut, CheckCircle2, AlertCircle, ChevronRight 
+} from 'lucide-react';
+import { FaDiscord } from 'react-icons/fa';
 
-export default function Home() {
-  const [username, setUsername] = useState('');
-  const router = useRouter();
-
-  const handleClaim = (e: React.FormEvent) => {
-    e.preventDefault();
-    router.push(`/register?username=${username}`);
-  };
+export default function DashboardOverview() {
+  const { data: session } = useSession();
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white font-['Satoshi'] selection:bg-purple-500/30">
-      {/* Navbar */}
-      <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[90%] max-w-5xl bg-[#161616]/80 backdrop-blur-xl border border-white/5 px-6 py-3 rounded-full flex items-center justify-between z-50">
-        <div className="flex items-center gap-2">
-          <Flame className="text-purple-500" size={20} fill="currentColor" />
-          <span className="font-black text-lg tracking-tighter">flame.gg</span>
-        </div>
+    <div className="min-h-screen bg-[#0a0612] text-white p-4 md:p-8 font-['Satoshi',sans-serif]">
+      <div className="max-w-[1400px] mx-auto">
         
-        <div className="hidden md:flex items-center gap-8 text-xs font-bold text-neutral-400">
-          <Link href="/help" className="hover:text-white transition">Help Center</Link>
-          <Link href="/discord" className="hover:text-white transition">Discord</Link>
-          <Link href="/pricing" className="hover:text-white transition">Pricing</Link>
-          <Link href="/leaderboard" className="hover:text-white transition">Leaderboard</Link>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <Link href="/login" className="text-xs font-bold text-neutral-400 hover:text-white transition">Login</Link>
-          <Link href="/register" className="bg-purple-600 hover:bg-purple-700 px-5 py-2.5 rounded-full text-xs font-black transition shadow-lg shadow-purple-600/20">
-            Sign Up Free
-          </Link>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <main className="relative pt-40 pb-20 px-6 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
-        <div className="flex-1 text-center lg:text-left">
-          <h1 className="text-5xl md:text-7xl font-black leading-[1.1] mb-6">
-            Everything you want, <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">right here.</span>
-          </h1>
-          <p className="text-neutral-500 text-lg max-w-xl mb-10 leading-relaxed">
-            flame.gg is your go-to for modern, feature-rich link-in-bio pages and fast, secure file hosting.
-          </p>
-          
-          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 mb-12">
-            <div className="text-center bg-[#161616] border border-white/5 px-6 py-3 rounded-2xl">
-              <p className="text-2xl font-black">12</p>
-              <p className="text-[10px] uppercase tracking-widest text-neutral-500 font-bold">Users</p>
-            </div>
-            <div className="text-center bg-[#161616] border border-white/5 px-6 py-3 rounded-2xl">
-              <p className="text-2xl font-black">452</p>
-              <p className="text-[10px] uppercase tracking-widest text-neutral-500 font-bold">Profile Views</p>
-            </div>
-          </div>
-
-          <form onSubmit={handleClaim} className="relative max-w-md group">
-            <div className="absolute inset-y-0 left-5 flex items-center text-neutral-500 text-sm">
-              flame.gg/
-            </div>
-            <input 
-              type="text" 
-              placeholder="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full bg-[#161616] border border-white/10 rounded-2xl py-5 pl-24 pr-32 text-sm font-bold focus:outline-none focus:border-purple-600 transition"
+        {/* Section: Account Overview */}
+        <section className="mb-10">
+          <h2 className="text-[15px] font-bold mb-5 text-neutral-400">Account Overview</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard 
+              title="Username" 
+              value={session?.user?.name || "invxder"} 
+              sub="Change available now" 
+              icon={<Edit3 size={18}/>} 
             />
-            <button className="absolute right-2 top-2 bottom-2 bg-purple-600 hover:bg-purple-700 px-6 rounded-xl text-xs font-black transition">
-              Claim Now
-            </button>
-          </form>
-        </div>
+            <StatCard 
+              title="Alias" 
+              value="0 Aliases Used" 
+              sub="1 Alias Slots Remaining" 
+              icon={<User size={18}/>} 
+            />
+            <StatCard 
+              title="UID" 
+              value="777,544" 
+              sub="Among the first 45%" 
+              icon={<Hash size={18}/>} 
+            />
+            <StatCard 
+              title="Profile Views" 
+              value="26" 
+              sub="+1 views since last 7 days" 
+              icon={<Eye size={18}/>} 
+            />
+          </div>
+        </section>
 
-        {/* Phone Mockup Area */}
-        <div className="flex-1 relative w-full max-w-md h-[500px]">
-          <div className="absolute top-0 right-0 w-64 h-[450px] bg-neutral-900 rounded-[3rem] border-[8px] border-[#161616] shadow-2xl rotate-12 z-20 overflow-hidden">
-             <div className="w-full h-full bg-gradient-to-b from-purple-900/20 to-black p-4">
-                <div className="w-12 h-12 rounded-full bg-neutral-800 mx-auto mt-8 mb-4" />
-                <div className="w-20 h-2 bg-neutral-800 mx-auto rounded-full mb-8" />
-                <div className="space-y-3">
-                  {[1,2,3].map(i => <div key={i} className="w-full h-10 bg-neutral-800/50 rounded-xl" />)}
-                </div>
-             </div>
-          </div>
-          <div className="absolute top-10 left-0 w-64 h-[450px] bg-neutral-900 rounded-[3rem] border-[8px] border-[#161616] shadow-2xl -rotate-12 z-10 overflow-hidden opacity-50">
-             {/* Mock Content */}
-          </div>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-white/5 pt-20 pb-10 px-6 max-w-7xl mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-20">
-          <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <Flame className="text-purple-500" size={24} fill="currentColor" />
-              <span className="font-black text-xl tracking-tighter">flame.gg</span>
-            </div>
-            <p className="text-neutral-500 text-sm">The ultimate link-in-bio platform.</p>
-          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          <div>
-            <h4 className="font-bold text-sm mb-6 text-purple-400 uppercase tracking-widest">General</h4>
-            <ul className="space-y-4 text-sm text-neutral-500 font-medium">
-              <li><Link href="/login">Login</Link></li>
-              <li><Link href="/register">Sign Up</Link></li>
-              <li><Link href="/pricing">Pricing</Link></li>
-            </ul>
+          {/* Left Column: Account Statistics */}
+          <div className="lg:col-span-8 space-y-8">
+            <section>
+              <h2 className="text-[15px] font-bold mb-5 text-neutral-400">Account Statistics</h2>
+              <div className="bg-[#0f0a1a] border border-white/5 rounded-[2rem] p-8">
+                
+                {/* Progress Bar */}
+                <div className="mb-8">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="font-bold text-sm">Profile Completion</span>
+                    <span className="text-neutral-500 text-sm font-bold">80% completed</span>
+                  </div>
+                  <div className="w-full bg-white/5 h-2.5 rounded-full overflow-hidden">
+                    <div className="bg-purple-600 h-full w-[80%] shadow-[0_0_20px_rgba(147,51,234,0.4)]" />
+                  </div>
+                </div>
+
+                {/* Warning Box */}
+                <div className="bg-amber-500/5 border border-amber-500/10 p-5 rounded-2xl flex items-start gap-4 mb-8">
+                  <div className="bg-amber-500/20 p-2 rounded-full">
+                    <AlertCircle className="text-amber-500" size={18} />
+                  </div>
+                  <div>
+                    <p className="font-black text-[14px] text-amber-200">Your profile isn't complete yet!</p>
+                    <p className="text-xs font-bold text-neutral-500 mt-1">Complete your profile to make it more discoverable and appealing.</p>
+                  </div>
+                </div>
+
+                {/* Completion Badges */}
+                <div className="flex flex-wrap gap-3">
+                  <CompletionBadge text="Upload An Avatar" active={false} hasArrow />
+                  <CompletionBadge text="Add A Description" active={true} />
+                  <CompletionBadge text="Link Discord Account" active={true} />
+                  <CompletionBadge text="Add Socials" active={true} />
+                  <CompletionBadge text="Reach 10 profile views" active={true} />
+                </div>
+              </div>
+            </section>
           </div>
 
-          <div>
-            <h4 className="font-bold text-sm mb-6 text-purple-400 uppercase tracking-widest">Resources</h4>
-            <ul className="space-y-4 text-sm text-neutral-500 font-medium">
-              <li><Link href="/help">Help Center</Link></li>
-              <li><Link href="/changelog">Changelog</Link></li>
-              <li><Link href="/status">Website Status</Link></li>
-            </ul>
+          {/* Right Column: Manage & Connections */}
+          <div className="lg:col-span-4 space-y-6">
+            <div className="bg-[#0f0a1a] border border-white/5 rounded-[2rem] p-7">
+              <h3 className="font-black text-lg mb-1">Manage your account</h3>
+              <p className="text-neutral-500 text-[13px] font-bold mb-6">Change your email, username and more.</p>
+              
+              <div className="space-y-2.5">
+                <MenuButton icon={<Edit3 size={16}/>} label="Change Username" />
+                <MenuButton icon={<User size={16}/>} label="Change Display Name" />
+                <MenuButton icon={<Hash size={16}/>} label="Manage Aliases" />
+                <MenuButton icon={<Settings size={16}/>} label="Account Settings" />
+              </div>
+
+              <div className="mt-10">
+                <h3 className="font-black text-[11px] uppercase tracking-[0.15em] text-neutral-500 mb-4">Connections</h3>
+                <p className="text-[12px] font-bold text-neutral-600 mb-4 text-center lg:text-left">Link your Discord account to guns.lol</p>
+                <div className="flex items-center gap-2">
+                  <button className="flex-1 bg-[#5865F2]/10 border border-[#5865F2]/20 text-[#5865F2] py-3.5 rounded-xl flex items-center justify-center gap-3 text-sm font-black transition-all hover:bg-[#5865F2]/20">
+                    <FaDiscord size={18}/> Discord Connected
+                  </button>
+                  <button 
+                    onClick={() => signOut()}
+                    className="bg-red-500/10 border border-red-500/20 text-red-500 p-3.5 rounded-xl hover:bg-red-500/20 transition-all"
+                  >
+                    <LogOut size={18} />
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div>
-            <h4 className="font-bold text-sm mb-6 text-purple-400 uppercase tracking-widest">Contact</h4>
-            <ul className="space-y-4 text-sm text-neutral-500 font-medium">
-              <li><Link href="/discord">Discord Server</Link></li>
-              <li><Link href="/email">Email</Link></li>
-            </ul>
-          </div>
         </div>
-        
-        <div className="text-center text-neutral-600 text-[10px] font-bold uppercase tracking-[0.2em]">
-          © 2026 flame.gg — All rights reserved.
-        </div>
-      </footer>
+      </div>
     </div>
+  );
+}
+
+// Sub-components to keep the layout clean
+function StatCard({ title, value, sub, icon }: any) {
+  return (
+    <div className="bg-[#150f24] border border-white/5 p-7 rounded-[2rem] relative group hover:border-purple-500/20 transition-all cursor-default">
+      <div className="absolute right-6 top-7 text-neutral-700 group-hover:text-purple-500 transition-colors">
+        {icon}
+      </div>
+      <p className="text-neutral-500 text-[11px] font-black uppercase tracking-widest mb-3">{title}</p>
+      <p className="text-2xl font-black mb-1">{value}</p>
+      <p className="text-neutral-600 text-[11px] font-bold tracking-tight">{sub}</p>
+    </div>
+  );
+}
+
+function CompletionBadge({ text, active, hasArrow }: { text: string; active: boolean; hasArrow?: boolean }) {
+  return (
+    <div className={`flex items-center gap-2.5 px-5 py-3 rounded-xl border text-[13px] font-bold transition-all ${
+      active 
+      ? 'bg-green-500/5 border-green-500/10 text-green-500' 
+      : 'bg-white/5 border-white/5 text-neutral-400 hover:bg-white/10 cursor-pointer'
+    }`}>
+      {active ? <CheckCircle2 size={16} className="shrink-0" /> : <User size={16} className="shrink-0 text-neutral-600" />}
+      <span className="flex-1">{text}</span>
+      {hasArrow && <ChevronRight size={14} className="text-neutral-700" />}
+    </div>
+  );
+}
+
+function MenuButton({ icon, label }: any) {
+  return (
+    <button className="w-full flex items-center gap-3 bg-white/[0.03] hover:bg-white/[0.07] border border-white/5 py-3.5 px-5 rounded-2xl transition-all text-[14px] font-black text-neutral-300">
+      <span className="text-neutral-500">{icon}</span>
+      {label}
+    </button>
   );
 }
