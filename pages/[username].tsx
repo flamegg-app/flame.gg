@@ -2,22 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { supabase } from '../lib/supabase';
-import { 
-  Flame as FlameIcon, 
-  Github as GithubIcon, 
-  Youtube as YoutubeIcon, 
-  AlertTriangle as AlertTriangleIcon,
-  // Use generic fallbacks for the ones causing errors
-  Share as TwitterIcon, 
-  Globe as InstagramIcon 
-} from 'lucide-react';
+// @ts-ignore
+import { Flame, Info, Mail, Share, Globe, AlertTriangle } from 'lucide-react';
 
-const Flame = FlameIcon;
-const Twitter = TwitterIcon;
-const Github = GithubIcon;
-const Youtube = YoutubeIcon;
-const AlertTriangle = AlertTriangleIcon;
-const Instagram = InstagramIcon;
+const FlameIcon = Flame;
+const Github = Info;        // Fallback to an 'Info' circle
+const Youtube = Mail;        // Fallback to a 'Mail' icon
+const AlertTriangle = AlertTriangle;
+const Twitter = Share;       // Fallback to a 'Share' arrow
+const Instagram = Globe;     // Fallback to a 'Globe'
 
 export default function UserProfile() {
   const router = useRouter();
