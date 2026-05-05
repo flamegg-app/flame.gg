@@ -36,64 +36,91 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white font-['Satoshi',sans-serif] selection:bg-purple-500/30 overflow-x-hidden">
+    <div className="min-h-screen bg-[#0a0612] text-white font-['Satoshi',sans-serif] selection:bg-purple-500/30 overflow-x-hidden">
       
       {/* 1. Header Navigation */}
-      <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-6xl z-50 bg-black/40 backdrop-blur-md border border-white/5 py-3 px-8 rounded-full flex items-center justify-between">
+      <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-6xl z-50 bg-[#160d21]/60 backdrop-blur-xl border border-white/10 py-3 px-8 rounded-full flex items-center justify-between shadow-2xl shadow-purple-900/20">
         <div className="flex items-center gap-2">
           <img src="/logo.webp" alt="Logo" className="w-7 h-7 object-contain" />
           <span className="text-xl font-black tracking-tighter">scope.gg</span>
         </div>
         
-        <div className="hidden md:flex items-center gap-8 text-[13px] font-bold text-neutral-400">
+        <div className="hidden md:flex items-center gap-8 text-[13px] font-bold text-neutral-300">
           <Link href="/help" className="hover:text-white transition">Help Center</Link>
           <a href="https://discord.gg/ro-market" target="_blank" rel="noreferrer" className="hover:text-white transition">Discord</a>
           <Link href="/leaderboard" className="hover:text-white transition">Leaderboard</Link>
           <button onClick={() => scrollToSection('pricing')} className="hover:text-white transition">Pricing</button>
-          <Link href="/dashboard" className="bg-[#2a1a3a] text-[#d8b4fe] border border-purple-500/20 px-6 py-2 rounded-full font-black hover:bg-[#3b2a4a] transition">
+          <Link href="/dashboard" className="bg-purple-600/20 text-purple-200 border border-purple-500/30 px-6 py-2 rounded-full font-black hover:bg-purple-600/40 transition">
             Dashboard
           </Link>
         </div>
       </nav>
 
-      {/* 2. Hero Section with Floating Logo Background (Replicating Reference) */}
-      <header className="pt-52 pb-32 px-6 flex flex-col items-center text-center relative overflow-hidden">
-        {/* Background Pattern Layer */}
-        <div className="absolute inset-0 opacity-[0.04] pointer-events-none select-none flex flex-wrap justify-center gap-24 p-20 scale-125 -rotate-12">
-           {[...Array(30)].map((_, i) => (
-             <img key={i} src="/logo.webp" className="w-24 h-24 grayscale" alt="" />
-           ))}
+      {/* 2. Hero Section */}
+      <header className="pt-52 pb-20 px-6 flex flex-col items-center text-center relative overflow-hidden bg-gradient-to-b from-[#1a0b2e] to-[#0a0612]">
+        
+        {/* Scattered Background Icons */}
+        <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
+          <img src="/logo.webp" className="absolute top-10 left-[10%] w-32 h-32 opacity-[0.07] -rotate-12 grayscale" alt="" />
+          <img src="/logo.webp" className="absolute top-20 right-[15%] w-40 h-40 opacity-[0.08] rotate-12 grayscale" alt="" />
+          <img src="/logo.webp" className="absolute bottom-40 right-[10%] w-28 h-28 opacity-[0.05] -rotate-45 grayscale" alt="" />
+          <img src="/logo.webp" className="absolute top-1/2 -left-10 w-44 h-44 opacity-[0.03] rotate-12 grayscale" alt="" />
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight relative z-10">
+        <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight relative z-10 drop-shadow-2xl">
           Everything you want, right here.
         </h1>
-        <p className="text-neutral-400 text-lg md:text-xl mb-12 max-w-2xl font-medium relative z-10 leading-relaxed">
+        <p className="text-purple-100/60 text-lg md:text-xl mb-12 max-w-2xl font-medium relative z-10 leading-relaxed">
           scope.gg is your go-to for modern, feature-rich link-in-bio pages and fast, secure file hosting.
         </p>
-        <div className="flex flex-wrap justify-center gap-4 relative z-10">
-          <button 
-            onClick={() => router.push('/register')}
-            className="bg-[#4c1d95] hover:bg-[#5b21b6] px-10 py-4 rounded-full font-black transition-all shadow-xl shadow-purple-900/20 active:scale-95"
-          >
+        
+        <div className="flex flex-wrap justify-center gap-4 relative z-10 mb-20">
+          <button onClick={() => router.push('/register')} className="bg-purple-600 hover:bg-purple-500 px-10 py-4 rounded-full font-black transition-all shadow-xl shadow-purple-600/30 active:scale-95">
             Sign Up for Free
           </button>
-          <button 
-            onClick={() => scrollToSection('pricing')}
-            className="bg-white/5 hover:bg-white/10 border border-white/10 px-10 py-4 rounded-full font-black transition-all active:scale-95"
-          >
+          <button onClick={() => scrollToSection('pricing')} className="bg-white/10 hover:bg-white/15 border border-white/20 px-10 py-4 rounded-full font-black transition-all active:scale-95 backdrop-blur-sm">
             View Pricing
           </button>
         </div>
+
+        {/* 3. The New Mockup Showcase - Replicating image_ca823b.jpg */}
+        <div className="relative w-full max-w-7xl mx-auto px-4 perspective-1000">
+           <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-0 mt-10">
+              {/* Dashboard Preview (Left Skew) */}
+              <div className="relative z-20 w-full md:w-[60%] transform md:-rotate-y-12 md:rotate-x-6 md:hover:rotate-0 transition-transform duration-700">
+                <img 
+                  src="/dashboard-mockup.png" 
+                  alt="Dashboard Preview" 
+                  className="rounded-3xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-[#130b21]" 
+                />
+              </div>
+
+              {/* Profile Previews (Right Side Stack) */}
+              <div className="relative z-10 w-full md:w-[40%] flex justify-center -mt-10 md:mt-0 md:-ml-20">
+                 <img 
+                   src="/profile-mockup.png" 
+                   alt="Profile Preview" 
+                   className="w-[280px] rounded-[2.5rem] border border-white/10 shadow-2xl transform rotate-6 md:rotate-12 translate-y-10" 
+                 />
+                 <img 
+                   src="/profile-mockup.png" 
+                   alt="Profile Preview 2" 
+                   className="w-[280px] rounded-[2.5rem] border border-white/10 shadow-2xl absolute -bottom-10 -right-4 md:right-0 transform -rotate-3 md:-rotate-6" 
+                 />
+              </div>
+           </div>
+           {/* Bottom Fade out for the images */}
+           <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#0a0612] to-transparent z-30" />
+        </div>
       </header>
 
-      {/* 3. Stats Grid */}
+      {/* 4. Stats Grid */}
       <section className="py-24 px-6 max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-black mb-6">
-            Over <span className="text-purple-500">1,740,000</span> people use scope.gg
+            Over <span className="text-purple-400">1,740,000</span> people use scope.gg
           </h2>
-          <p className="text-neutral-500 font-bold text-lg max-w-3xl mx-auto leading-relaxed">
+          <p className="text-neutral-400 font-bold text-lg max-w-3xl mx-auto leading-relaxed">
             Create feature-rich, customizable and modern link-in-bio pages, along with fast and secure file hosting, all with scope.gg.
           </p>
         </div>
@@ -105,9 +132,9 @@ export default function Home() {
             { label: 'File Uploads', val: '600,000+', icon: HardDrive },
             { label: 'Subscribers', val: '48,100+', icon: Diamond },
           ].map((stat, i) => (
-            <div key={i} className="bg-[#0c0c0c] border border-white/5 p-10 rounded-[2.5rem] relative group">
-              <stat.icon className="absolute right-8 top-8 text-purple-500 opacity-20 transition" size={32} />
-              <p className="text-3xl font-black mb-1 tracking-tight">{stat.val}</p>
+            <div key={i} className="bg-[#130b21] border border-white/10 p-10 rounded-[2.5rem] relative group hover:border-purple-500/40 transition-all shadow-lg">
+              <stat.icon className="absolute right-8 top-8 text-purple-500 opacity-20 transition group-hover:opacity-40" size={32} />
+              <p className="text-3xl font-black mb-1 tracking-tight text-purple-50">{stat.val}</p>
               <p className="text-neutral-500 text-xs font-black uppercase tracking-[0.2em]">{stat.label}</p>
             </div>
           ))}
@@ -118,30 +145,30 @@ export default function Home() {
           <p className="text-neutral-400 font-bold mb-6 text-sm">Claim your profile and create an account in minutes!</p>
           <form 
             onSubmit={(e) => handleClaim(e)}
-            className="bg-[#0c0c0c] border border-white/10 p-1.5 rounded-2xl flex w-full max-w-md focus-within:border-purple-500/50 transition-all shadow-2xl"
+            className="bg-[#1a0d2d] border border-white/10 p-1.5 rounded-2xl flex w-full max-w-md focus-within:border-purple-500/50 transition-all shadow-2xl"
           >
-            <span className="pl-5 pr-3 py-3 text-neutral-600 font-bold border-r border-white/5">scope.gg/</span>
+            <span className="pl-5 pr-3 py-3 text-neutral-500 font-bold border-r border-white/5">scope.gg/</span>
             <input 
               type="text" 
               placeholder="username" 
-              className="bg-transparent border-none outline-none flex-1 px-4 font-bold text-white placeholder:text-neutral-800"
+              className="bg-transparent border-none outline-none flex-1 px-4 font-bold text-white placeholder:text-neutral-700"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
-            <button type="submit" className="bg-[#2a1a3a] text-[#d8b4fe] px-8 py-3 rounded-xl font-black text-xs hover:bg-[#3b2a4a] transition">
+            <button type="submit" className="bg-purple-600 text-white px-8 py-3 rounded-xl font-black text-xs hover:bg-purple-500 transition">
               Claim Now
             </button>
           </form>
         </div>
       </section>
 
-      {/* 4. Pricing */}
-      <section id="pricing" className="py-32 px-6 bg-[#080808]">
+      {/* 5. Pricing */}
+      <section id="pricing" className="py-32 px-6 bg-[#0c0716]">
         <h2 className="text-4xl font-black text-center mb-20 tracking-tight">
           Explore our exclusive plans and join <span className="text-purple-400">48,100+</span> subscribers
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          <div className="bg-[#0c0c0c] border border-white/5 p-12 rounded-[3rem]">
+          <div className="bg-[#130b21] border border-white/5 p-12 rounded-[3rem] hover:border-white/10 transition">
             <h3 className="text-2xl font-black mb-8">Free</h3>
             <div className="mb-8"><span className="text-5xl font-black">0€</span><span className="text-neutral-500 font-bold ml-2">/Lifetime</span></div>
             <ul className="space-y-5 mb-14">
@@ -154,11 +181,11 @@ export default function Home() {
             <button onClick={() => router.push('/register')} className="w-full py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-black transition">Get Started</button>
           </div>
 
-          <div className="bg-[#110c1a] border border-purple-500/20 p-12 rounded-[3rem] relative shadow-2xl">
-            <div className="absolute top-6 right-8 bg-purple-500/10 text-purple-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">Most Popular</div>
-            <h3 className="text-2xl font-black mb-8 flex items-center gap-2">Premium</h3>
+          <div className="bg-[#1a0d2d] border border-purple-500/30 p-12 rounded-[3rem] relative shadow-2xl shadow-purple-900/20">
+            <div className="absolute top-6 right-8 bg-purple-500/20 text-purple-300 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">Most Popular</div>
+            <h3 className="text-2xl font-black mb-8 flex items-center gap-2 text-purple-50">Premium</h3>
             <div className="mb-2"><span className="text-5xl font-black">7,99€</span><span className="text-neutral-500 font-bold ml-2">/Lifetime</span></div>
-            <p className="text-purple-400/80 text-[11px] font-black mb-8 italic uppercase">Pay once. Keep it forever.</p>
+            <p className="text-purple-400 text-[11px] font-black mb-8 italic uppercase">Pay once. Keep it forever.</p>
             <ul className="space-y-5 mb-14">
               {['Exclusive Badge', 'Profile Layouts', 'Custom Fonts', 'Special Profile Effects', 'Advanced Customization'].map(item => (
                 <li key={item} className="flex items-center gap-3 text-[13px] font-bold text-neutral-200">
@@ -171,20 +198,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. Footer */}
-      <footer className="pt-32 pb-16 px-6 border-t border-white/5">
+      {/* 6. Footer */}
+      <footer className="pt-32 pb-16 px-6 border-t border-white/5 bg-[#0a0612]">
         <div className="max-w-6xl mx-auto">
-          <div className="bg-[#120c1a] border border-purple-500/10 p-16 rounded-[3.5rem] mb-24 flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
+          <div className="bg-gradient-to-r from-[#1a0d2d] to-[#120c1a] border border-purple-500/20 p-16 rounded-[3.5rem] mb-24 flex flex-col md:flex-row items-center justify-between relative overflow-hidden shadow-2xl">
              <div className="relative z-10 text-center md:text-left">
                <h2 className="text-5xl font-black mb-6 leading-tight">Everything you want, <br/>right here.</h2>
-               <p className="text-neutral-400 font-bold mb-10 max-w-lg">Join over 1,740,000+ people using scope.gg and become part of our large community.</p>
-               <div className="flex bg-black/40 border border-white/5 p-1.5 rounded-2xl max-w-sm mx-auto md:mx-0">
+               <p className="text-purple-100/50 font-bold mb-10 max-w-lg">Join over 1,740,000+ people using scope.gg and become part of our large community.</p>
+               <div className="flex bg-black/40 border border-white/10 p-1.5 rounded-2xl max-w-sm mx-auto md:mx-0 backdrop-blur-md">
                   <span className="pl-4 pr-2 py-3 text-neutral-600 font-bold text-sm">scope.gg/</span>
                   <input type="text" placeholder="username" className="bg-transparent outline-none flex-1 font-bold text-sm text-white" />
                   <button onClick={(e) => handleClaim(e)} className="bg-purple-600 px-6 py-2 rounded-xl text-[11px] font-black uppercase tracking-tighter hover:bg-purple-500 transition">Claim Now</button>
                </div>
              </div>
-             <img src="/logo.webp" className="absolute -right-16 top-0 h-full opacity-5 pointer-events-none grayscale" alt="" />
+             <img src="/logo.webp" className="absolute -right-16 top-0 h-full opacity-5 pointer-events-none grayscale -rotate-12" alt="" />
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-12 mb-20 text-left">
@@ -199,7 +226,7 @@ export default function Home() {
                </div>
                <p className="text-neutral-500 text-sm font-bold mb-8 max-w-xs leading-relaxed">Create feature-rich, customizable and modern link-in-bio pages with scope.gg.</p>
                <div className="bg-white/5 border border-white/10 px-5 py-3 rounded-2xl flex items-center justify-between w-48">
-                 <span className="text-[11px] font-black uppercase tracking-widest">🇺🇸 English (US)</span>
+                 <span className="text-[11px] font-black uppercase tracking-widest text-neutral-300">🇺🇸 English (US)</span>
                  <ChevronDown size={14} className="text-neutral-500" />
                </div>
             </div>
