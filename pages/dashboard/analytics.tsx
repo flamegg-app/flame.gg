@@ -1,4 +1,4 @@
-import DashboardLayout from '../../components/DashboardLayout';
+import DashboardLayout from '@/components/DashboardLayout';
 import { Eye, MousePointer2, TrendingUp, Calendar } from 'lucide-react';
 
 export default function Analytics() {
