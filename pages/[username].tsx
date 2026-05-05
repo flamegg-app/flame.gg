@@ -2,38 +2,68 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { supabase } from '../lib/supabase';
-// @ts-ignore
-import { Flame, Info, Mail, Share, Globe, AlertTriangle as AlertTriangleIcon } from 'lucide-react';
 
-const FlameIcon = Flame;
-const Github = Info;
-const Youtube = Mail;
-const Twitter = Share;
-const Instagram = Globe;
-// This solves the "used before declaration" error:
+// @ts-ignore - Bypassing version-specific export issues in lucide-react
+import { 
+  Flame as FlameIcon, 
+  Info as InfoIcon, 
+  Mail as MailIcon, 
+  Share as ShareIcon, 
+  Globe as GlobeIcon, 
+  AlertTriangle as AlertTriangleIcon 
+} from 'lucide-react';
+
+// Map icons to the names used in your JSX to avoid "used before declaration" errors
+const Flame = FlameIcon;
+const Github = InfoIcon;
+const Youtube = MailIcon;
+const Twitter = ShareIcon;
+const Instagram = GlobeIcon;
 const AlertTriangle = AlertTriangleIcon;
 
+export default function UserProfile() {
+  const router = useRouter();
+  const { username } = router.query;
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    if (username) fetchProfile();
+    // Only attempt to fetch if the username is available from the router
+    if (username) {
+      fetchProfile();
+    }
   }, [username]);
 
   async function fetchProfile() {
-    // We look up the user by their display_name (case insensitive)
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .ilike('display_name', username as string)
-      .single();
+    try {
+      setLoading(true);
+      // We look up the user by their display_name (case insensitive)
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .ilike('display_name', username as string)
+        .single();
 
-    if (error || !data) {
+      if (error || !data) {
+        setProfile(null);
+      } else {
+        setProfile(data);
+      }
+    } catch (err) {
+      console.error('Error fetching profile:', err);
       setProfile(null);
-    } else {
-      setProfile(data);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
-  if (loading) return <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center"><Flame className="text-purple-600 animate-pulse" size={48} fill="currentColor" /></div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <Flame className="text-purple-600 animate-pulse" size={48} fill="currentColor" />
+      </div>
+    );
+  }
 
   // BAN CHECK: If you banned them in the Admin Panel, their page won't show
   if (!profile || profile.is_banned) {
@@ -42,7 +72,12 @@ const AlertTriangle = AlertTriangleIcon;
         <AlertTriangle size={64} className="text-red-500 mb-6" />
         <h1 className="text-4xl font-black tracking-tighter mb-2">Account Unavailable</h1>
         <p className="text-neutral-500 max-w-sm">This account has been suspended or does not exist.</p>
-        <button onClick={() => router.push('/')} className="mt-8 text-purple-500 font-bold text-sm hover:underline tracking-widest uppercase">Return to flame.gg</button>
+        <button 
+          onClick={() => router.push('/')} 
+          className="mt-8 text-purple-500 font-bold text-sm hover:underline tracking-widest uppercase"
+        >
+          Return to flame.gg
+        </button>
       </div>
     );
   }
@@ -72,7 +107,9 @@ const AlertTriangle = AlertTriangleIcon;
             className="w-32 h-32 rounded-full mb-8 border-4 shadow-lg flex items-center justify-center bg-neutral-900 overflow-hidden"
             style={{ borderColor: profile.primary_color }}
           >
-             <span className="text-4xl font-black opacity-20">{profile.display_name?.charAt(0).toUpperCase()}</span>
+             <span className="text-4xl font-black opacity-20">
+               {profile.display_name?.charAt(0).toUpperCase()}
+             </span>
           </div>
 
           {/* Name & Badge */}
@@ -90,7 +127,7 @@ const AlertTriangle = AlertTriangleIcon;
             {profile.bio || "No bio yet."}
           </p>
 
-          {/* Buttons/Links (Simplified for remaking guns.lol style) */}
+          {/* Buttons/Links */}
           <div className="w-full space-y-4">
             <button 
                className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition font-bold text-sm tracking-wide"
@@ -100,7 +137,7 @@ const AlertTriangle = AlertTriangleIcon;
             </button>
 
             {/* Social Icons */}
-            <div className="flex gap-6 mt-8">
+            <div className="flex gap-6 mt-8 justify-center">
               <Instagram size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
               <Twitter size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
               <Github size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
