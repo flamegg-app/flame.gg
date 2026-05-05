@@ -8,10 +8,13 @@ import {
   Users, 
   HardDrive, 
   Diamond, 
-  MessageSquare, 
   Mail, 
-  Send, 
-  Share2 
+  // Company Icons from Lucide
+  Twitter,
+  Instagram,
+  Send,
+  // Using MessageSquare for Discord look as Lucide generic
+  MessageSquare 
 } from 'lucide-react';
 
 export default function Home() {
@@ -35,6 +38,8 @@ export default function Home() {
     }
   };
 
+  const discordUrl = "https://discord.gg/QFnZFWZ25R";
+
   return (
     <div className="min-h-screen bg-[#0a0612] text-white font-['Satoshi',sans-serif] selection:bg-purple-500/30 overflow-x-hidden">
       
@@ -47,7 +52,7 @@ export default function Home() {
         
         <div className="hidden md:flex items-center gap-8 text-[13px] font-bold text-neutral-300">
           <Link href="/help" className="hover:text-white transition">Help Center</Link>
-          <a href="https://discord.gg/ro-market" target="_blank" rel="noreferrer" className="hover:text-white transition">Discord</a>
+          <a href={discordUrl} target="_blank" rel="noreferrer" className="hover:text-white transition">Discord</a>
           <Link href="/leaderboard" className="hover:text-white transition">Leaderboard</Link>
           <button onClick={() => scrollToSection('pricing')} className="hover:text-white transition">Pricing</button>
           <Link href="/dashboard" className="bg-purple-600/20 text-purple-200 border border-purple-500/30 px-6 py-2 rounded-full font-black hover:bg-purple-600/40 transition">
@@ -59,7 +64,6 @@ export default function Home() {
       {/* 2. Hero Section */}
       <header className="pt-52 pb-20 px-6 flex flex-col items-center text-center relative overflow-hidden bg-gradient-to-b from-[#1a0b2e] to-[#0a0612]">
         
-        {/* Scattered Background Icons */}
         <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
           <img src="/logo.webp" className="absolute top-10 left-[10%] w-32 h-32 opacity-[0.07] -rotate-12 grayscale" alt="" />
           <img src="/logo.webp" className="absolute top-20 right-[15%] w-40 h-40 opacity-[0.08] rotate-12 grayscale" alt="" />
@@ -83,7 +87,6 @@ export default function Home() {
           </button>
         </div>
 
-        {/* 3. The New Mockup Showcase */}
         <div className="relative w-full max-w-7xl mx-auto px-4 perspective-1000">
            <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-0 mt-10">
               <div className="relative z-20 w-full md:w-[60%] transform md:-rotate-y-12 md:rotate-x-6 md:hover:rotate-0 transition-transform duration-700">
@@ -137,7 +140,6 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Claim Input */}
         <div className="mt-20 flex flex-col items-center">
           <p className="text-neutral-400 font-bold mb-6 text-sm">Claim your profile and create an account in minutes!</p>
           <form 
@@ -222,14 +224,12 @@ export default function Home() {
                   </div>
                </div>
                <p className="text-neutral-500 text-sm font-bold mb-8 max-w-xs leading-relaxed">Create feature-rich, customizable and modern link-in-bio pages with scope.gg.</p>
-               
-               {/* Language Selector Integrated Here */}
                <LanguageSelector />
             </div>
             
             {[
-              { title: 'General', links: [{ n: 'Login', h: '/login' }, { n: 'Sign Up', h: '/register' }, { n: 'Pricing', h: '#pricing' }, { n: 'Leaderboard', h: '/leaderboard' }] },
-              { title: 'Contact', links: [{ n: 'Discord Server', h: 'https://discord.gg/ro-market' }, { n: 'Support Email', h: 'mailto:support@scope.gg' }] },
+              { title: 'General', links: [{ n: 'Login', h: '/login' }, { n: 'Sign Up', h: '/register' }, { n: 'Help Center', h: '/help' }, { n: 'Leaderboard', h: '/leaderboard' }] },
+              { title: 'Contact', links: [{ n: 'Discord Server', h: discordUrl }, { n: 'Support Email', h: 'mailto:support@scope.gg' }] },
               { title: 'Legal', links: [{ n: 'Terms of Service', h: '/tos' }, { n: 'Privacy Policy', h: '/privacy' }] }
             ].map((col) => (
               <div key={col.title}>
@@ -251,11 +251,21 @@ export default function Home() {
 
           <div className="flex flex-col md:flex-row items-center justify-between pt-12 border-t border-white/5">
              <p className="text-neutral-600 text-[11px] font-black uppercase tracking-widest">Copyright © 2026 scope.gg - All Rights Reserved.</p>
+             
+             {/* Icons updated to match image_bea4b6.png order and companies */}
              <div className="flex items-center gap-8 text-neutral-600 mt-8 md:mt-0">
-               <MessageSquare size={20} className="hover:text-white transition cursor-pointer" />
-               <Mail size={20} className="hover:text-white transition cursor-pointer" />
-               <Share2 size={20} className="hover:text-white transition cursor-pointer" />
-               <Send size={20} className="hover:text-white transition cursor-pointer" />
+               <a href={discordUrl} target="_blank" rel="noreferrer">
+                  <MessageSquare size={20} className="hover:text-white transition cursor-pointer" />
+               </a>
+               <a href="https://instagram.com/scope.gg" target="_blank" rel="noreferrer">
+                  <Instagram size={20} className="hover:text-white transition cursor-pointer" />
+               </a>
+               <a href="https://twitter.com/scope_gg" target="_blank" rel="noreferrer">
+                  <Twitter size={20} className="hover:text-white transition cursor-pointer" />
+               </a>
+               <a href="https://t.me/scope_gg" target="_blank" rel="noreferrer">
+                  <Send size={20} className="hover:text-white transition cursor-pointer" />
+               </a>
              </div>
           </div>
         </div>
