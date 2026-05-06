@@ -11,7 +11,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // The Fix: Redirects to your Vercel callback route to prevent the loop
+  // Fixed OAuth logic for Vercel
   const handleOAuthLogin = async (provider: 'google' | 'discord') => {
     setLoading(true);
     await supabase.auth.signInWithOAuth({
@@ -38,14 +38,14 @@ export default function LoginPage() {
     <div className="min-h-screen bg-[#0a0a14] flex flex-col items-center justify-center p-6 font-sans">
       <div className="w-full max-w-[440px] bg-[#0f0f1b] border border-white/5 rounded-[40px] p-10 flex flex-col items-center shadow-2xl">
         
-        {/* Profile/Logo Image */}
+        {/* LOGO BOX: Updated to logo.webp[cite: 1] */}
         <div className="w-16 h-16 bg-[#1a1a2e] rounded-lg mb-8 overflow-hidden border border-white/10 flex items-center justify-center">
-          <img src="/logo.png" alt="Scope Logo" className="w-10 h-10 object-contain opacity-80" />
+          <img src="/logo.webp" alt="Scope Logo" className="w-10 h-10 object-contain opacity-80" />
         </div>
 
         <h1 className="text-[32px] font-black text-white mb-10 tracking-tight">Log in to your account</h1>
 
-        {/* OAuth Buttons: Matching your screenshot exactly */}
+        {/* OAUTH BUTTONS[cite: 1] */}
         <div className="w-full space-y-4 mb-10">
           <button 
             onClick={() => handleOAuthLogin('discord')}
@@ -62,14 +62,14 @@ export default function LoginPage() {
           </button>
         </div>
 
-        {/* Separator */}
+        {/* SEPARATOR */}
         <div className="w-full flex items-center gap-4 mb-10">
           <div className="flex-1 h-[1px] bg-white/5"></div>
           <span className="text-neutral-600 text-[10px] font-black uppercase tracking-[0.2em]">Or use email</span>
           <div className="flex-1 h-[1px] bg-white/5"></div>
         </div>
 
-        {/* Email Form Fields[cite: 1] */}
+        {/* FORM[cite: 1] */}
         <form onSubmit={handleEmailLogin} className="w-full space-y-6">
           <div className="space-y-3">
             <label className="text-neutral-500 text-[11px] font-black uppercase tracking-widest ml-1">Email Address</label>
@@ -106,7 +106,6 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {/* Login Button Style[cite: 1] */}
           <button 
             type="submit"
             className="w-full bg-[#1a1a2e]/50 border border-purple-500/20 hover:bg-[#1a1a2e] text-white py-5 rounded-2xl font-black text-lg transition-all mt-4"
@@ -120,7 +119,7 @@ export default function LoginPage() {
         </p>
       </div>
 
-      {/* Footer matching your screenshot */}
+      {/* FOOTER */}
       <div className="mt-12 w-full max-w-4xl flex items-center justify-between text-neutral-700 text-[11px] font-black tracking-widest uppercase">
         <p>© 2026 SCOPE.GG</p>
         <div className="bg-[#0f0f1b] border border-white/5 px-4 py-2 rounded-xl flex items-center gap-3 cursor-pointer">
