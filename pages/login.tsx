@@ -11,7 +11,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // Fixed OAuth logic for Vercel
   const handleOAuthLogin = async (provider: 'google' | 'discord') => {
     setLoading(true);
     await supabase.auth.signInWithOAuth({
@@ -38,38 +37,35 @@ export default function LoginPage() {
     <div className="min-h-screen bg-[#0a0a14] flex flex-col items-center justify-center p-6 font-sans">
       <div className="w-full max-w-[440px] bg-[#0f0f1b] border border-white/5 rounded-[40px] p-10 flex flex-col items-center shadow-2xl">
         
-        {/* LOGO BOX: Updated to logo.webp[cite: 1] */}
         <div className="w-16 h-16 bg-[#1a1a2e] rounded-lg mb-8 overflow-hidden border border-white/10 flex items-center justify-center">
           <img src="/logo.webp" alt="Scope Logo" className="w-10 h-10 object-contain opacity-80" />
         </div>
 
         <h1 className="text-[32px] font-black text-white mb-10 tracking-tight">Log in to your account</h1>
 
-        {/* OAUTH BUTTONS[cite: 1] */}
+        {/* Updated OAuth Buttons with Glow and Pointer */}
         <div className="w-full space-y-4 mb-10">
           <button 
             onClick={() => handleOAuthLogin('discord')}
-            className="w-full bg-[#5865F2] hover:bg-[#4752c4] text-white py-4 rounded-2xl flex items-center justify-center gap-3 font-bold text-[15px] transition-all"
+            className="w-full bg-[#5865F2] hover:bg-[#4752c4] hover:shadow-[0_0_20px_rgba(88,101,242,0.4)] cursor-pointer text-white py-4 rounded-2xl flex items-center justify-center gap-3 font-bold text-[15px] transition-all duration-300"
           >
             <FaDiscord size={20} /> Continue with Discord
           </button>
           
           <button 
             onClick={() => handleOAuthLogin('google')}
-            className="w-full bg-white hover:bg-neutral-100 text-black py-4 rounded-2xl flex items-center justify-center gap-3 font-bold text-[15px] transition-all shadow-lg"
+            className="w-full bg-white hover:bg-neutral-100 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] cursor-pointer text-black py-4 rounded-2xl flex items-center justify-center gap-3 font-bold text-[15px] transition-all duration-300 shadow-lg"
           >
             <FaGoogle size={18} className="text-[#DB4437]" /> Continue with Google
           </button>
         </div>
 
-        {/* SEPARATOR */}
         <div className="w-full flex items-center gap-4 mb-10">
           <div className="flex-1 h-[1px] bg-white/5"></div>
           <span className="text-neutral-600 text-[10px] font-black uppercase tracking-[0.2em]">Or use email</span>
           <div className="flex-1 h-[1px] bg-white/5"></div>
         </div>
 
-        {/* FORM[cite: 1] */}
         <form onSubmit={handleEmailLogin} className="w-full space-y-6">
           <div className="space-y-3">
             <label className="text-neutral-500 text-[11px] font-black uppercase tracking-widest ml-1">Email Address</label>
@@ -101,28 +97,27 @@ export default function LoginPage() {
           </div>
 
           <div className="text-right">
-            <button type="button" className="text-neutral-500 text-sm hover:text-neutral-400 font-bold transition-colors">
+            <button type="button" className="text-neutral-500 text-sm hover:text-neutral-400 cursor-pointer font-bold transition-colors">
               Forgot password?
             </button>
           </div>
 
           <button 
             type="submit"
-            className="w-full bg-[#1a1a2e]/50 border border-purple-500/20 hover:bg-[#1a1a2e] text-white py-5 rounded-2xl font-black text-lg transition-all mt-4"
+            className="w-full bg-[#1a1a2e]/50 border border-purple-500/20 hover:bg-[#1a1a2e] hover:shadow-[0_0_15px_rgba(168,85,247,0.2)] cursor-pointer text-white py-5 rounded-2xl font-black text-lg transition-all mt-4"
           >
             Login to scope.gg
           </button>
         </form>
 
         <p className="mt-10 text-neutral-500 text-sm font-bold">
-          Are you new to scope.gg? <Link href="/register" className="text-purple-500 hover:text-purple-400 ml-1">Create an account</Link>
+          Are you new to scope.gg? <Link href="/register" className="text-purple-500 hover:text-purple-400 cursor-pointer ml-1">Create an account</Link>
         </p>
       </div>
 
-      {/* FOOTER */}
       <div className="mt-12 w-full max-w-4xl flex items-center justify-between text-neutral-700 text-[11px] font-black tracking-widest uppercase">
         <p>© 2026 SCOPE.GG</p>
-        <div className="bg-[#0f0f1b] border border-white/5 px-4 py-2 rounded-xl flex items-center gap-3 cursor-pointer">
+        <div className="bg-[#0f0f1b] border border-white/5 px-4 py-2 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-[#1a1a2e] transition-colors">
           <span>US English (US)</span>
           <div className="w-2 h-2 border-r border-b border-neutral-700 rotate-45 mb-1"></div>
         </div>
