@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { supabase } from '../lib/supabase';
 
-// @ts-ignore - Bypassing version-specific export issues in lucide-react
+// @ts-ignore
 import { 
   Flame as FlameIcon, 
   Info as InfoIcon, 
@@ -13,7 +13,6 @@ import {
   AlertTriangle as AlertTriangleIcon 
 } from 'lucide-react';
 
-// Map icons to the names used in your JSX to avoid "used before declaration" errors
 const Flame = FlameIcon;
 const Github = InfoIcon;
 const Youtube = MailIcon;
@@ -28,7 +27,6 @@ export default function UserProfile() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Only attempt to fetch if the username is available from the router
     if (username) {
       fetchProfile();
     }
@@ -37,7 +35,6 @@ export default function UserProfile() {
   async function fetchProfile() {
     try {
       setLoading(true);
-      // We look up the user by their display_name (case insensitive)
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -48,12 +45,33 @@ export default function UserProfile() {
         setProfile(null);
       } else {
         setProfile(data);
+        // TRIGGER VIEW LOGIC AFTER PROFILE IS LOADED
+        recordView(data.id);
       }
     } catch (err) {
       console.error('Error fetching profile:', err);
       setProfile(null);
     } finally {
       setLoading(false);
+    }
+  }
+
+  // NEW: Logic to handle 1 account = 1 unique view
+  async function recordView(profileId: string) {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // 1. Don't record if not logged in, or if viewing own page
+    if (!user || user.id === profileId) return;
+
+    // 2. Insert into the profile_views table you just created
+    // The "Unique Constraint" in the DB will stop duplicates automatically
+    const { error: viewError } = await supabase
+      .from('profile_views')
+      .insert({ viewer_id: user.id, profile_id: profileId });
+
+    // 3. Only if the view was successfully logged (first time), increment count
+    if (!viewError) {
+      await supabase.rpc('increment_profile_views', { profile_id: profileId });
     }
   }
 
@@ -65,7 +83,6 @@ export default function UserProfile() {
     );
   }
 
-  // BAN CHECK: If you banned them in the Admin Panel, their page won't show
   if (!profile || profile.is_banned) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center justify-center p-6 text-center">
@@ -76,7 +93,7 @@ export default function UserProfile() {
           onClick={() => router.push('/')} 
           className="mt-8 text-purple-500 font-bold text-sm hover:underline tracking-widest uppercase"
         >
-          Return to flame.gg
+          Return to scope.gg
         </button>
       </div>
     );
@@ -85,49 +102,47 @@ export default function UserProfile() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white font-['Satoshi'] relative overflow-hidden flex flex-col items-center justify-center p-6">
       <Head>
-        <title>{profile.display_name} | flame.gg</title>
+        <title>{profile.display_name} | scope.gg</title>
         <meta name="description" content={profile.bio} />
       </Head>
 
-      {/* BACKGROUND EFFECTS (Locked to Premium/Legendary) */}
       {profile.effect === 'matrix' && (
-        <div className="absolute inset-0 opacity-20 pointer-events-none bg-[url('https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJndnY3ZzR2ZzR2ZzR2ZzR2ZzR2ZzR2ZzR2ZzR2ZzR2ZzR2/3o7TKSjP8SOTFvP3K8/giphy.gif')] bg-cover mix-blend-screen" />
+        <div className="absolute inset-0 opacity-20 pointer-events-none bg-[url('https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJndnY3ZzR2ZzR2ZzR2ZzR2ZzR2ZzR2ZzR2ZzR2ZzR2/3o7TKSjP8SOTFvP3K8/giphy.gif')] bg-cover mix-blend-screen" />
       )}
       
       {profile.effect === 'stars' && (
         <div className="absolute inset-0 opacity-30 pointer-events-none bg-[radial-gradient(circle_at_center,_white_1px,_transparent_1px)] bg-[length:50px_50px]" />
       )}
 
-      {/* PROFILE CARD */}
       <div className="relative z-10 w-full max-w-md">
         <div className="bg-[#111111]/80 backdrop-blur-3xl border border-white/10 rounded-[3.5rem] p-10 flex flex-col items-center text-center shadow-2xl">
           
-          {/* Avatar Circle */}
           <div 
             className="w-32 h-32 rounded-full mb-8 border-4 shadow-lg flex items-center justify-center bg-neutral-900 overflow-hidden"
             style={{ borderColor: profile.primary_color }}
           >
-             <span className="text-4xl font-black opacity-20">
-               {profile.display_name?.charAt(0).toUpperCase()}
-             </span>
+             {profile.avatar_url ? (
+               <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+             ) : (
+               <span className="text-4xl font-black opacity-20">
+                 {profile.display_name?.charAt(0).toUpperCase()}
+               </span>
+             )}
           </div>
 
-          {/* Name & Badge */}
           <div className="flex items-center gap-2 mb-4">
             <h1 className="text-4xl font-black tracking-tighter">{profile.display_name}</h1>
             {profile.subscription_tier === 'legendary' && (
-              <div className="bg-gradient-to-tr from-yellow-400 to-orange-500 p-1 rounded-full shadow-lg" title="Legendary Member">
+              <div className="bg-gradient-to-tr from-yellow-400 to-orange-500 p-1 rounded-full shadow-lg">
                 <Flame size={14} className="text-black" fill="currentColor" />
               </div>
             )}
           </div>
 
-          {/* Bio */}
           <p className="text-neutral-400 leading-relaxed mb-10 text-sm font-medium">
             {profile.bio || "No bio yet."}
           </p>
 
-          {/* Buttons/Links */}
           <div className="w-full space-y-4">
             <button 
                className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition font-bold text-sm tracking-wide"
@@ -136,7 +151,6 @@ export default function UserProfile() {
               Contact Me
             </button>
 
-            {/* Social Icons */}
             <div className="flex gap-6 mt-8 justify-center">
               <Instagram size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
               <Twitter size={20} className="text-neutral-600 hover:text-white transition cursor-pointer" />
@@ -146,11 +160,10 @@ export default function UserProfile() {
           </div>
         </div>
 
-        {/* Branding Footer */}
         <div className="mt-10 flex flex-col items-center opacity-40">
            <div className="flex items-center gap-2 mb-1">
               <Flame size={12} fill="currentColor" className="text-purple-500" />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em]">flame.gg</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.3em]">scope.gg</span>
            </div>
            <p className="text-[10px] font-bold">Create your own profile today.</p>
         </div>

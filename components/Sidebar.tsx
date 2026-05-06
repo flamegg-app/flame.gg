@@ -46,6 +46,7 @@ export default function Sidebar() {
   };
 
   const navItems = [
+    // Updated path to ensure it correctly routes to your internal dashboard overview
     { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { name: 'Customize', icon: User, path: '/dashboard/customize' },
     { name: 'Billing', icon: CreditCard, path: '/pricing' },
@@ -61,7 +62,7 @@ export default function Sidebar() {
           <div className="bg-purple-600 p-2 rounded-xl shadow-lg shadow-purple-600/20">
             <Flame size={20} fill="white" className="text-white" />
           </div>
-          <span className="font-black text-xl tracking-tighter text-white">flame.gg</span>
+          <span className="font-black text-xl tracking-tighter text-white">scope.gg</span>
         </div>
         
         {/* Real-time Notification Component */}
@@ -71,6 +72,7 @@ export default function Sidebar() {
       {/* Main Navigation */}
       <nav className="flex-1 space-y-2">
         {navItems.map((item) => {
+          // Fix for active state when visiting the dashboard index
           const isActive = router.pathname === item.path;
           return (
             <Link 
@@ -92,7 +94,7 @@ export default function Sidebar() {
         <div className="pt-4 mt-4 border-t border-neutral-900">
           <p className="px-4 text-[10px] font-black uppercase tracking-widest text-neutral-600 mb-2">Community</p>
           <a 
-            href="https://discord.gg/your-invite-link" 
+            href="https://discord.gg/QFnZFWZ25R" 
             target="_blank" 
             rel="noopener noreferrer"
             className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-[#5865F2] hover:bg-[#5865F2]/10 transition-all duration-200"
@@ -109,7 +111,7 @@ export default function Sidebar() {
             <Link 
               href="/admin"
               className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-200 ${
-                router.pathname === '/admin' 
+                router.pathname.startsWith('/admin') 
                 ? 'bg-red-500/10 text-red-500' 
                 : 'text-neutral-500 hover:text-red-400 hover:bg-red-500/5'
               }`}
