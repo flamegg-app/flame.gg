@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useRouter } from 'next/router';
-import { Mail, Lock, ArrowRight } from 'lucide-react';
+import { Mail, Key, EyeOff } from 'lucide-react';
 import { FaDiscord, FaGoogle } from 'react-icons/fa';
 import Link from 'next/link';
 
@@ -11,11 +11,11 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // FIXED LOGIC: Sends user to the callback API route
-  const handleGoogleLogin = async () => {
+  // The Fix: Redirects to your Vercel callback route
+  const handleOAuthLogin = async (provider: 'google' | 'discord') => {
     setLoading(true);
     await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider,
       options: {
         redirectTo: `${window.location.origin}/api/auth/callback`,
       },
@@ -35,83 +35,85 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center p-6 font-['Satoshi']">
-      <div className="w-full max-w-[440px] flex flex-col items-center">
+    <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4 font-sans">
+      <div className="w-full max-w-[400px] bg-[#0f0f0f] border border-white/5 rounded-[2rem] p-8 flex flex-col items-center shadow-2xl">
         
-        {/* ICON BOX: Exact Match to image_bcd7f1.png */}
-        <div className="w-16 h-16 bg-[#9333ea] rounded-2xl flex items-center justify-center mb-8 shadow-[0_0_30px_rgba(147,51,234,0.3)]">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
-            <path d="M12 2c0 0-3 3.5-3 5.5s1.5 3.5 3 3.5 3-1.5 3-3.5S12 2 12 2z" />
-            <path d="M12 22c4.418 0 8-3.582 8-8 0-4.418-3.582-8-8-8s-8 3.582-8 8c0 4.418 3.582 8 8 8z" opacity="0.5" />
-          </svg>
-        </div>
+        {/* LOGO: Using your logo.png file */}
+        <img src="/logo.png" alt="Logo" className="w-20 h-20 mb-6 object-contain" />
 
-        {/* HEADING: Serif + Italic Match */}
-        <h1 className="text-[42px] font-serif font-bold tracking-tight mb-2 italic">Welcome back</h1>
-        <p className="text-neutral-500 font-medium mb-10 text-[15px]">Log in to manage your scope.gg profile</p>
+        <h1 className="text-2xl font-bold text-white mb-6">Log in to your account</h1>
 
-        {/* OAUTH GRID */}
-        <div className="grid grid-cols-2 gap-4 w-full mb-10">
+        {/* AUTH BUTTONS: Exact style from image_32f91a.png[cite: 1] */}
+        <div className="w-full space-y-3 mb-6">
           <button 
-            onClick={handleGoogleLogin}
-            className="flex items-center justify-center gap-3 bg-[#111] border border-white/5 py-4 rounded-2xl hover:bg-white/5 transition-all font-bold text-[15px]"
+            onClick={() => handleOAuthLogin('discord')}
+            className="w-full bg-[#354191] hover:bg-[#3f4db0] text-white py-3.5 rounded-2xl flex items-center justify-center gap-3 font-bold transition-all"
           >
-            <FaGoogle size={18} /> Google
+            <FaDiscord size={20} /> Discord
           </button>
-          <button className="flex items-center justify-center gap-3 bg-[#111] border border-white/5 py-4 rounded-2xl opacity-20 cursor-not-allowed font-bold text-[15px]">
-            <FaDiscord size={18} /> Discord
+          
+          <button 
+            onClick={() => handleOAuthLogin('google')}
+            className="w-full bg-[#222] hover:bg-[#2a2a2a] text-white py-3.5 rounded-2xl flex items-center justify-center gap-3 font-bold border border-white/5 transition-all"
+          >
+            <FaGoogle size={18} /> Gmail
           </button>
         </div>
 
         {/* SEPARATOR */}
-        <div className="relative w-full mb-10">
-          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/[0.03]"></div></div>
-          <div className="relative flex justify-center text-[10px] font-black uppercase tracking-[0.2em] text-neutral-600">
-            <span className="bg-[#050505] px-4">Or use credentials</span>
-          </div>
+        <div className="w-full flex items-center gap-4 mb-6">
+          <div className="flex-1 h-[1px] bg-white/10"></div>
+          <span className="text-neutral-500 text-sm font-medium">Or with email</span>
+          <div className="flex-1 h-[1px] bg-white/10"></div>
         </div>
 
-        {/* INPUTS */}
-        <form onSubmit={handleEmailLogin} className="w-full space-y-6">
+        {/* FORM FIELDS[cite: 1] */}
+        <form onSubmit={handleEmailLogin} className="w-full space-y-5">
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-neutral-600 uppercase tracking-widest ml-1">Email</label>
+            <label className="text-white text-sm font-bold ml-1">Email</label>
             <div className="relative">
-              <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-700" size={18} />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" size={20} />
               <input 
                 type="email" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                className="w-full bg-[#0f0f0f] border border-white/5 py-5 pl-14 pr-6 rounded-2xl focus:outline-none focus:border-[#9333ea]/50 transition-all text-sm font-medium placeholder:text-neutral-800"
+                placeholder="Email"
+                className="w-full bg-[#151515] border-none py-4 pl-12 pr-4 rounded-2xl text-white placeholder:text-neutral-700 focus:ring-1 focus:ring-purple-500/50 outline-none"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-neutral-600 uppercase tracking-widest ml-1">Password</label>
+            <label className="text-white text-sm font-bold ml-1">Password</label>
             <div className="relative">
-              <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-700" size={18} />
+              <Key className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" size={20} />
               <input 
                 type="password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full bg-[#0f0f0f] border border-white/5 py-5 pl-14 pr-6 rounded-2xl focus:outline-none focus:border-[#9333ea]/50 transition-all text-sm font-medium placeholder:text-neutral-800"
+                placeholder="Password"
+                className="w-full bg-[#151515] border-none py-4 pl-12 pr-12 rounded-2xl text-white placeholder:text-neutral-700 focus:ring-1 focus:ring-purple-500/50 outline-none"
               />
+              <EyeOff className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-700 cursor-pointer" size={20} />
             </div>
           </div>
 
-          {/* THE BIG PURPLE BUTTON */}
+          <div className="text-right">
+            <button type="button" className="text-neutral-500 text-sm hover:text-neutral-400 font-medium">
+              Forgot password?
+            </button>
+          </div>
+
           <button 
             type="submit"
-            className="w-full bg-[#9333ea] hover:bg-[#a855f7] py-5 rounded-2xl font-black text-[15px] transition-all flex items-center justify-center gap-2 shadow-[0_10px_20px_rgba(147,51,234,0.2)] mt-4"
+            className="w-full bg-[#181818] hover:bg-[#222] text-white py-4 rounded-2xl font-bold border border-white/5 transition-all mt-2"
           >
-            Sign In <ArrowRight size={20} />
+            Login
           </button>
         </form>
 
-        <p className="mt-12 text-center text-neutral-600 text-[13px] font-bold">
-          New to scope.gg? <Link href="/register" className="text-[#9333ea] hover:underline ml-1">Create account</Link>
+        <p className="mt-6 text-neutral-400 text-sm font-medium">
+          Are you new to guns.lol? <Link href="/register" className="text-purple-400 hover:text-purple-300 ml-1">Create an account</Link>
         </p>
       </div>
     </div>
