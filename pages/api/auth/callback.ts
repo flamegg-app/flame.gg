@@ -1,15 +1,17 @@
+import { createPagesServerClient } from '@supabase/auth-helpers-nextjs'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { supabase } from '../../../lib/supabase'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { code } = req.query
 
   if (code) {
-    const { error } = await supabase.auth.exchangeCodeForSession(String(code))
-    if (!error) {
-      return res.redirect('/dashboard')
-    }
+    const supabase = createPagesServerClient({ req, res })
+    // Exchange the code for a session
+    await supabase.auth.exchangeCodeForSession(String(code))
   }
 
-  return res.redirect('/login?error=auth_failed')
+  // Go to dashboard after successful exchange
+  res.redirect('/dashboard')
 }
+
+export default handler
