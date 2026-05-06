@@ -1,125 +1,150 @@
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { signIn } from "next-auth/react";
-import { Mail, Lock, EyeOff, Eye } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
+import { useRouter } from 'next/router';
+import { Flame, Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react';
 import { FaDiscord, FaGoogle } from 'react-icons/fa';
-import LanguageSelector from '../components/LanguageSelector';
+import Link from 'next/link';
 
-export default function Login() {
-  const [showPassword, setShowPassword] = useState(false);
+export default function LoginPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // This function handles the Google Sign-In logic
+  // Check if there was an error passed back from the callback route
+  useEffect(() => {
+    if (router.query.error) {
+      setErrorMessage("Authentication failed. Please try again.");
+    }
+  }, [router.query]);
+
   const handleGoogleLogin = async () => {
-    try {
-      // The callbackUrl is where the user goes AFTER successful login
-      await signIn('google', { callbackUrl: '/dashboard' });
-    } catch (error) {
-      console.error("Login failed:", error);
+    setLoading(true);
+    setErrorMessage(null);
+    
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        // Dynamically uses https://flame-gg-puz3.vercel.app/api/auth/callback
+        redirectTo: `${window.location.origin}/api/auth/callback`,
+      },
+    });
+
+    if (error) {
+      setErrorMessage(error.message);
+      setLoading(false);
+    }
+  };
+
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMessage(null);
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setErrorMessage(error.message);
+      setLoading(false);
+    } else {
+      router.push('/dashboard');
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0612] text-white font-['Satoshi',sans-serif] flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      
-      {/* Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/10 blur-[140px] rounded-full pointer-events-none" />
-
-      {/* Main Login Card */}
-      <div className="w-full max-w-[440px] z-10">
-        <div className="bg-[#110c1d] border border-white/5 rounded-[3rem] p-10 md:p-12 shadow-2xl shadow-black/50">
-          
-          {/* Logo & Header */}
-          <div className="flex flex-col items-center mb-10">
-            <Link href="/">
-              <img src="/logo.webp" alt="scope.gg" className="w-16 h-16 mb-6 object-contain hover:scale-110 transition-transform cursor-pointer" />
-            </Link>
-            <h1 className="text-2xl font-black tracking-tight text-center">Log in to your account</h1>
+    <div className="min-h-screen bg-[#0a0a0a] text-white font-['Satoshi'] flex items-center justify-center p-6">
+      <div className="w-full max-w-md">
+        
+        {/* Brand Section */}
+        <div className="flex flex-col items-center mb-10 text-center">
+          <div className="bg-purple-600 p-3 rounded-2xl mb-4 shadow-xl shadow-purple-600/20">
+            <Flame size={28} fill="white" className="text-white" />
           </div>
-
-          {/* Social Auth Buttons */}
-          <div className="flex flex-col gap-3 mb-8">
-            {/* Discord Button */}
-            <button 
-              type="button"
-              className="w-full bg-[#5865F2] hover:bg-[#4752c4] py-4 rounded-2xl flex items-center justify-center gap-3 font-black text-[14px] transition-all hover:shadow-[0_0_20px_rgba(88,101,242,0.25)] active:scale-[0.98]"
-            >
-              <FaDiscord size={20} />
-              <span>Continue with Discord</span>
-            </button>
-
-            {/* Google Button - Logic Added Here */}
-            <button 
-              type="button"
-              onClick={handleGoogleLogin}
-              className="w-full bg-white hover:bg-neutral-200 py-4 rounded-2xl flex items-center justify-center gap-3 font-black text-[14px] text-black transition-all hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] active:scale-[0.98]"
-            >
-              <FaGoogle size={18} className="text-[#ea4335]" />
-              <span>Continue with Google</span>
-            </button>
-          </div>
-
-          {/* Divider */}
-          <div className="flex items-center gap-4 mb-8">
-            <div className="h-[1px] flex-1 bg-white/5" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-600">Or use email</span>
-            <div className="h-[1px] flex-1 bg-white/5" />
-          </div>
-
-          {/* Email Form */}
-          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
-            <div>
-              <label className="block text-[12px] font-black uppercase tracking-widest text-neutral-500 mb-2.5 ml-1">Email Address</label>
-              <div className="relative group">
-                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-600 group-focus-within:text-purple-500 transition-colors" size={18} />
-                <input 
-                  type="email" 
-                  placeholder="name@example.com" 
-                  className="w-full bg-black/40 border border-white/5 rounded-[1.25rem] py-4 pl-14 pr-4 outline-none focus:border-purple-500/50 focus:bg-black/60 transition-all font-bold text-[14px] placeholder:text-neutral-700"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-[12px] font-black uppercase tracking-widest text-neutral-500 mb-2.5 ml-1">Password</label>
-              <div className="relative group">
-                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-600 group-focus-within:text-purple-500 transition-colors" size={18} />
-                <input 
-                  type={showPassword ? "text" : "password"} 
-                  placeholder="••••••••" 
-                  className="w-full bg-black/40 border border-white/5 rounded-[1.25rem] py-4 pl-14 pr-14 outline-none focus:border-purple-500/50 focus:bg-black/60 transition-all font-bold text-[14px] placeholder:text-neutral-700"
-                />
-                <button 
-                  type="button" 
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-5 top-1/2 -translate-y-1/2 text-neutral-600 hover:text-white transition-colors"
-                >
-                  {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
-                </button>
-              </div>
-              <div className="flex justify-end mt-3">
-                <Link href="/forgot" className="text-[12px] font-bold text-neutral-500 hover:text-purple-400 transition">Forgot password?</Link>
-              </div>
-            </div>
-
-            <button type="submit" className="w-full bg-[#1a0d2d] hover:bg-[#251240] border border-purple-500/20 text-purple-100 py-4 rounded-[1.25rem] font-black text-[15px] transition-all active:scale-[0.98] mt-4 shadow-xl">
-              Login to scope.gg
-            </button>
-          </form>
-
-          {/* Footer Link */}
-          <p className="text-center mt-10 text-[13px] font-bold text-neutral-500">
-            Are you new to scope.gg? {' '}
-            <Link href="/register" className="text-purple-400 hover:text-purple-300 transition underline-offset-4 hover:underline">Create an account</Link>
-          </p>
+          <h1 className="text-3xl font-black tracking-tighter">Welcome back</h1>
+          <p className="text-neutral-500 font-bold mt-2">Log in to manage your scope.gg profile</p>
         </div>
 
-        {/* Bottom Page Footer */}
-        <div className="mt-12 flex flex-col md:flex-row items-center justify-between gap-6 opacity-60 hover:opacity-100 transition-opacity text-center md:text-left">
-          <p className="text-[11px] font-black uppercase tracking-widest text-neutral-500">
-            © 2026 scope.gg
-          </p>
-          <LanguageSelector />
+        {/* Error Callout */}
+        {errorMessage && (
+          <div className="mb-6 bg-red-500/10 border border-red-500/20 p-4 rounded-2xl flex items-center gap-3 text-red-500 text-sm font-bold">
+            <AlertCircle size={18} />
+            {errorMessage}
+          </div>
+        )}
+
+        {/* OAuth Buttons */}
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          <button 
+            onClick={handleGoogleLogin}
+            disabled={loading}
+            className="flex items-center justify-center gap-3 bg-white/5 border border-white/10 py-4 rounded-2xl hover:bg-white/10 transition-all font-black text-sm disabled:opacity-50"
+          >
+            <FaGoogle size={18} /> Google
+          </button>
+          <button 
+            disabled 
+            className="flex items-center justify-center gap-3 bg-white/5 border border-white/10 py-4 rounded-2xl opacity-30 cursor-not-allowed font-black text-sm"
+          >
+            <FaDiscord size={18} /> Discord
+          </button>
         </div>
+
+        <div className="relative mb-8">
+          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/5"></div></div>
+          <div className="relative flex justify-center text-[10px] font-black uppercase tracking-widest">
+            <span className="bg-[#0a0a0a] px-4 text-neutral-600 font-black">Or use credentials</span>
+          </div>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleEmailLogin} className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black text-neutral-600 uppercase tracking-[0.2em] ml-1">Email</label>
+            <div className="relative">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-700" size={18} />
+              <input 
+                type="email" 
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="w-full bg-[#111] border border-white/5 py-4 pl-12 pr-4 rounded-2xl focus:outline-none focus:border-purple-600/50 transition-all font-bold text-sm placeholder:text-neutral-800"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black text-neutral-600 uppercase tracking-[0.2em] ml-1">Password</label>
+            <div className="relative">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-700" size={18} />
+              <input 
+                type="password" 
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full bg-[#111] border border-white/5 py-4 pl-12 pr-4 rounded-2xl focus:outline-none focus:border-purple-600/50 transition-all font-bold text-sm placeholder:text-neutral-800"
+              />
+            </div>
+          </div>
+
+          <button 
+            type="submit"
+            disabled={loading}
+            className="w-full bg-purple-600 hover:bg-purple-500 py-4 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 group shadow-xl shadow-purple-600/10 disabled:opacity-50 disabled:cursor-wait"
+          >
+            {loading ? 'Authenticating...' : 'Sign In'} 
+            {!loading && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}
+          </button>
+        </form>
+
+        <p className="mt-10 text-center text-neutral-600 text-xs font-bold">
+          New to scope.gg? <Link href="/register" className="text-purple-500 hover:text-purple-400 transition-colors">Create account</Link>
+        </p>
       </div>
     </div>
   );
