@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useRouter } from 'next/router';
-import { Flame, Mail, Lock, ArrowRight } from 'lucide-react';
+import { Mail, Lock, EyeOff } from 'lucide-react';
 import { FaDiscord, FaGoogle } from 'react-icons/fa';
 import Link from 'next/link';
 
@@ -11,31 +11,21 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // Fixed: Reusable handler for both Google and Discord that points to your callback route
+  // The Fix: Redirects to your Vercel callback route to prevent the loop
   const handleOAuthLogin = async (provider: 'google' | 'discord') => {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOAuth({
+    await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        // Points to pages/api/auth/callback.ts
         redirectTo: `${window.location.origin}/api/auth/callback`,
       },
     });
-
-    if (error) {
-      console.error(`${provider} Auth Error:`, error.message);
-      setLoading(false);
-    }
   };
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       alert(error.message);
       setLoading(false);
@@ -45,86 +35,98 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white font-['Satoshi'] flex items-center justify-center p-6">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-[#0a0a14] flex flex-col items-center justify-center p-6 font-sans">
+      <div className="w-full max-w-[440px] bg-[#0f0f1b] border border-white/5 rounded-[40px] p-10 flex flex-col items-center shadow-2xl">
         
-        {/* Brand Section */}
-        <div className="flex flex-col items-center mb-10">
-          <div className="bg-purple-600 p-3 rounded-2xl mb-4 shadow-xl shadow-purple-600/20">
-            <Flame size={28} fill="white" className="text-white" />
-          </div>
-          <h1 className="text-3xl font-black tracking-tighter">Welcome back</h1>
-          <p className="text-neutral-500 font-bold mt-2">Log in to manage your scope.gg profile</p>
+        {/* Profile/Logo Image */}
+        <div className="w-16 h-16 bg-[#1a1a2e] rounded-lg mb-8 overflow-hidden border border-white/10 flex items-center justify-center">
+          <img src="/logo.png" alt="Scope Logo" className="w-10 h-10 object-contain opacity-80" />
         </div>
 
-        {/* OAuth Options */}
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <button 
-            onClick={() => handleOAuthLogin('google')}
-            disabled={loading}
-            className="flex items-center justify-center gap-3 bg-white/5 border border-white/10 py-4 rounded-2xl hover:bg-white/10 transition-all font-bold text-sm"
-          >
-            <FaGoogle size={18} /> Google
-          </button>
+        <h1 className="text-[32px] font-black text-white mb-10 tracking-tight">Log in to your account</h1>
+
+        {/* OAuth Buttons: Matching your screenshot exactly */}
+        <div className="w-full space-y-4 mb-10">
           <button 
             onClick={() => handleOAuthLogin('discord')}
-            disabled={loading}
-            className="flex items-center justify-center gap-3 bg-white/5 border border-white/10 py-4 rounded-2xl hover:bg-white/10 transition-all font-bold text-sm"
+            className="w-full bg-[#5865F2] hover:bg-[#4752c4] text-white py-4 rounded-2xl flex items-center justify-center gap-3 font-bold text-[15px] transition-all"
           >
-            <FaDiscord size={18} /> Discord
+            <FaDiscord size={20} /> Continue with Discord
+          </button>
+          
+          <button 
+            onClick={() => handleOAuthLogin('google')}
+            className="w-full bg-white hover:bg-neutral-100 text-black py-4 rounded-2xl flex items-center justify-center gap-3 font-bold text-[15px] transition-all shadow-lg"
+          >
+            <FaGoogle size={18} className="text-[#DB4437]" /> Continue with Google
           </button>
         </div>
 
-        <div className="relative mb-8">
-          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/5"></div></div>
-          <div className="relative flex justify-center text-[10px] font-black uppercase tracking-widest">
-            <span className="bg-[#0a0a0a] px-4 text-neutral-600">Or continue with email</span>
-          </div>
+        {/* Separator */}
+        <div className="w-full flex items-center gap-4 mb-10">
+          <div className="flex-1 h-[1px] bg-white/5"></div>
+          <span className="text-neutral-600 text-[10px] font-black uppercase tracking-[0.2em]">Or use email</span>
+          <div className="flex-1 h-[1px] bg-white/5"></div>
         </div>
 
-        {/* Email Form */}
-        <form onSubmit={handleEmailLogin} className="space-y-4">
-          <div className="space-y-1.5">
-            <label className="text-xs font-black text-neutral-500 uppercase tracking-widest ml-1">Email Address</label>
+        {/* Email Form Fields[cite: 1] */}
+        <form onSubmit={handleEmailLogin} className="w-full space-y-6">
+          <div className="space-y-3">
+            <label className="text-neutral-500 text-[11px] font-black uppercase tracking-widest ml-1">Email Address</label>
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-600" size={18} />
+              <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-700" size={18} />
               <input 
                 type="email" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
-                className="w-full bg-white/5 border border-white/10 py-4 pl-12 pr-4 rounded-2xl focus:outline-none focus:border-purple-500/50 transition-all font-medium text-sm"
+                className="w-full bg-[#0a0a14] border border-white/5 py-5 pl-14 pr-6 rounded-2xl text-white placeholder:text-neutral-800 focus:outline-none focus:border-purple-500/30 transition-all font-medium"
               />
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-black text-neutral-500 uppercase tracking-widest ml-1">Password</label>
+          <div className="space-y-3">
+            <label className="text-neutral-500 text-[11px] font-black uppercase tracking-widest ml-1">Password</label>
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-600" size={18} />
+              <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-700" size={18} />
               <input 
                 type="password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-white/5 border border-white/10 py-4 pl-12 pr-4 rounded-2xl focus:outline-none focus:border-purple-500/50 transition-all font-medium text-sm"
+                className="w-full bg-[#0a0a14] border border-white/5 py-5 pl-14 pr-14 rounded-2xl text-white placeholder:text-neutral-800 focus:outline-none focus:border-purple-500/30 transition-all font-medium"
               />
+              <EyeOff className="absolute right-5 top-1/2 -translate-y-1/2 text-neutral-700 cursor-pointer" size={18} />
             </div>
           </div>
 
+          <div className="text-right">
+            <button type="button" className="text-neutral-500 text-sm hover:text-neutral-400 font-bold transition-colors">
+              Forgot password?
+            </button>
+          </div>
+
+          {/* Login Button Style[cite: 1] */}
           <button 
             type="submit"
-            disabled={loading}
-            className="w-full bg-purple-600 hover:bg-purple-500 py-4 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 group"
+            className="w-full bg-[#1a1a2e]/50 border border-purple-500/20 hover:bg-[#1a1a2e] text-white py-5 rounded-2xl font-black text-lg transition-all mt-4"
           >
-            {loading ? 'Processing...' : 'Sign In'} 
-            {!loading && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}
+            Login to scope.gg
           </button>
         </form>
 
-        <p className="mt-8 text-center text-neutral-500 text-sm font-bold">
-          Don't have an account? <Link href="/register" className="text-purple-500 hover:underline">Create one</Link>
+        <p className="mt-10 text-neutral-500 text-sm font-bold">
+          Are you new to scope.gg? <Link href="/register" className="text-purple-500 hover:text-purple-400 ml-1">Create an account</Link>
         </p>
+      </div>
+
+      {/* Footer matching your screenshot */}
+      <div className="mt-12 w-full max-w-4xl flex items-center justify-between text-neutral-700 text-[11px] font-black tracking-widest uppercase">
+        <p>© 2026 SCOPE.GG</p>
+        <div className="bg-[#0f0f1b] border border-white/5 px-4 py-2 rounded-xl flex items-center gap-3 cursor-pointer">
+          <span>US English (US)</span>
+          <div className="w-2 h-2 border-r border-b border-neutral-700 rotate-45 mb-1"></div>
+        </div>
       </div>
     </div>
   );
