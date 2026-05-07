@@ -137,7 +137,8 @@ export default function Sidebar() {
   );
 }
 
-// Helper components - DEFINED ONLY ONCE
+// HELPER COMPONENTS (Defined exactly once)
+
 function SidebarMainLink({ label, icon, path, active, colorClass }: any) {
   return (
     <Link href={path} className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-[14px] font-bold transition-all duration-200 ${
