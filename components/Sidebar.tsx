@@ -33,6 +33,11 @@ export default function Sidebar() {
     getProfileAndPermissions();
   }, []);
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/login');
+  };
+
   const formattedUID = profile?.id_count 
     ? `UID ${String(profile.id_count).padStart(6, '0').replace(/\B(?=(\d{3})+(?!\d))/g, ",")}` 
     : "UID 000,000";
@@ -54,7 +59,6 @@ export default function Sidebar() {
       {/* Main Navigation */}
       <nav className="flex-1 px-4 space-y-1 overflow-y-auto scrollbar-hide">
         
-        {/* Account Collapsible */}
         <div className="mb-2">
           <button 
             onClick={() => setIsAccountOpen(!isAccountOpen)}
@@ -71,19 +75,18 @@ export default function Sidebar() {
           {isAccountOpen && (
             <div className="mt-1 ml-4 space-y-0.5 border-l border-white/5">
               <SubNavLink label="Overview" path="/dashboard" active={router.pathname === '/dashboard'} />
-              <SubNavLink label="Analytics" path="/dashboard/analytics" />
-              <SubNavLink label="Badges" path="/dashboard/badges" />
+              <SubNavLink label="Analytics" path="/dashboard/analytics" active={router.pathname === '/dashboard/analytics'} />
+              <SubNavLink label="Badges" path="/dashboard/badges" active={router.pathname === '/dashboard/badges'} />
               <SubNavLink label="Settings" path="/dashboard/settings" active={router.pathname === '/dashboard/settings'} />
             </div>
           )}
         </div>
 
-        {/* Links */}
         <SidebarMainLink label="Customize" icon={<Palette size={18}/>} path="/dashboard/customize" active={router.pathname === '/dashboard/customize'} />
-        <SidebarMainLink label="Links" icon={<LinkIcon size={18}/>} path="/dashboard/links" />
-        <SidebarMainLink label="Premium" icon={<Crown size={18} className="text-amber-400"/>} path="/pricing" />
-        <SidebarMainLink label="Image Host" icon={<ImageIcon size={18}/>} path="/dashboard/host" />
-        <SidebarMainLink label="Templates" icon={<FileText size={18}/>} path="/dashboard/templates" />
+        <SidebarMainLink label="Links" icon={<LinkIcon size={18}/>} path="/dashboard/links" active={router.pathname === '/dashboard/links'} />
+        <SidebarMainLink label="Premium" icon={<Crown size={18} className="text-amber-400"/>} path="/pricing" active={router.pathname === '/pricing'} />
+        <SidebarMainLink label="Image Host" icon={<ImageIcon size={18}/>} path="/dashboard/host" active={router.pathname === '/dashboard/host'} />
+        <SidebarMainLink label="Templates" icon={<FileText size={18}/>} path="/dashboard/templates" active={router.pathname === '/dashboard/templates'} />
 
         {/* Support Section */}
         <div className="mt-8 bg-[#111111] border border-white/5 rounded-[1.5rem] p-5 space-y-4">
@@ -100,7 +103,6 @@ export default function Sidebar() {
           </div>
         </div>
 
-        {/* Share Button */}
         <button className="w-full bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 py-3.5 mt-4 rounded-2xl flex items-center justify-center gap-3 font-black text-[13px] transition-all cursor-pointer">
           <Share2 size={16} /> Share Your Profile
         </button>
@@ -126,13 +128,16 @@ export default function Sidebar() {
               <p className="text-[10px] text-neutral-600 font-bold tracking-tight">{formattedUID}</p>
             </div>
           </div>
-          <MoreHorizontal size={18} className="text-neutral-700 group-hover:text-neutral-400 transition-colors" />
+          <button onClick={handleLogout} className="p-1 hover:bg-white/5 rounded-lg transition-colors">
+            <MoreHorizontal size={18} className="text-neutral-700 group-hover:text-neutral-400" />
+          </button>
         </div>
       </div>
     </aside>
   );
 }
 
+// Helper components - DEFINED ONLY ONCE
 function SidebarMainLink({ label, icon, path, active, colorClass }: any) {
   return (
     <Link href={path} className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-[14px] font-bold transition-all duration-200 ${
