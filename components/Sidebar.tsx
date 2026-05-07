@@ -2,11 +2,9 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { 
-  LayoutDashboard, User, Settings, Shield, 
-  LogOut, Palette, Link as LinkIcon, 
+  User, Palette, Link as LinkIcon, 
   Crown, ImageIcon, FileText, ChevronDown, 
-  HelpCircle, ExternalLink, Share2, MoreHorizontal, 
-  BarChart3, Award 
+  HelpCircle, ExternalLink, Share2, MoreHorizontal, Shield
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import NotificationBell from './NotificationBell';
@@ -49,7 +47,7 @@ export default function Sidebar() {
       <div className="flex items-center justify-between p-6 mb-2">
         <div className="flex items-center gap-3">
           <div className="bg-[#1a1a2e] p-2 rounded-xl border border-white/10 shadow-lg shadow-purple-600/10">
-            <img src="/logo.webp" alt="Scope Logo" className="w-5 h-5 object-contain opacity-90" />
+            <img src="/logo.webp" alt="Logo" className="w-5 h-5 object-contain opacity-90" />
           </div>
           <span className="font-black text-[20px] tracking-tighter text-white uppercase italic">scope.gg</span>
         </div>
@@ -137,8 +135,6 @@ export default function Sidebar() {
   );
 }
 
-// HELPER COMPONENTS (Defined exactly once)
-
 function SidebarMainLink({ label, icon, path, active, colorClass }: any) {
   return (
     <Link href={path} className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-[14px] font-bold transition-all duration-200 ${
@@ -154,19 +150,6 @@ function SubNavLink({ label, path, active }: any) {
     <Link href={path} className={`flex items-center px-10 py-2 rounded-xl text-[13px] font-bold transition-all duration-200 ${
       active ? 'text-white' : 'text-neutral-500 hover:text-neutral-300'
     }`}>
-      {label}
-    </Link>
-  );
-}
-
-function SubNavLink({ label, path, active }: any) {
-  return (
-    <Link 
-      href={path}
-      className={`flex items-center gap-3 px-10 py-2.5 rounded-xl text-[14px] font-bold transition-all duration-200 ${
-        active ? 'text-white' : 'text-neutral-500 hover:text-neutral-300'
-      }`}
-    >
       {label}
     </Link>
   );
