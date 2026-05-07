@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
-import Sidebar from '../components/Sidebar';
+import { supabase } from '../../lib/supabase';
+import Sidebar from '../../components/Sidebar';
 import { 
   Edit3, User, Hash, Eye, 
   MessageSquare, X, Check, Loader2,
