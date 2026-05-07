@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useRouter } from 'next/router';
-import { Mail, Lock, EyeOff } from 'lucide-react';
+import { Mail, Lock, EyeOff, Eye } from 'lucide-react'; // Added Eye icon
 import { FaDiscord, FaGoogle } from 'react-icons/fa';
 import Link from 'next/link';
 
@@ -10,6 +10,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // New state for visibility
 
   const handleOAuthLogin = async (provider: 'google' | 'discord') => {
     setLoading(true);
@@ -43,7 +44,6 @@ export default function LoginPage() {
 
         <h1 className="text-[32px] font-black text-white mb-10 tracking-tight">Log in to your account</h1>
 
-        {/* Updated OAuth Buttons with Glow and Pointer */}
         <div className="w-full space-y-4 mb-10">
           <button 
             onClick={() => handleOAuthLogin('discord')}
@@ -86,13 +86,19 @@ export default function LoginPage() {
             <div className="relative">
               <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-700" size={18} />
               <input 
-                type="password" 
+                type={showPassword ? "text" : "password"} // Type changes based on state
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 className="w-full bg-[#0a0a14] border border-white/5 py-5 pl-14 pr-14 rounded-2xl text-white placeholder:text-neutral-800 focus:outline-none focus:border-purple-500/30 transition-all font-medium"
               />
-              <EyeOff className="absolute right-5 top-1/2 -translate-y-1/2 text-neutral-700 cursor-pointer" size={18} />
+              {/* Toggle Eye/EyeOff Icon */}
+              <div 
+                className="absolute right-5 top-1/2 -translate-y-1/2 text-neutral-700 cursor-pointer hover:text-neutral-500 transition-colors"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+              </div>
             </div>
           </div>
 
