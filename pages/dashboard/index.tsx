@@ -2,19 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import Sidebar from '../../components/Sidebar';
 import { 
-  Edit3, User, Hash, Eye, 
-  MessageSquare, X, Check, Loader2,
-  Camera, FileText, Share2, TrendingUp
+  Edit3, User, Hash, Eye, MessageSquare, X, Check, Loader2,
+  Camera, FileText, Share2, TrendingUp, Settings, ChevronRight, AlertCircle
 } from 'lucide-react';
 
 export default function DashboardOverview() {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   
-  // Input States
+  // Input States for Modals/Boxes
   const [newUsername, setNewUsername] = useState('');
   const [newDisplayName, setNewDisplayName] = useState('');
-  const [newAlias, setNewAlias] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
@@ -28,29 +26,17 @@ export default function DashboardOverview() {
       if (data) {
         setProfile(data);
         setNewUsername(data.username || '');
-        setNewDisplayName(data.display_name || ''); // Added Display Name
-        setNewAlias(data.alias || '');
+        setNewDisplayName(data.display_name || ''); 
       }
     }
     setLoading(false);
   }
 
-  // SAVE CHANGES HANDLER
   const handleUpdateProfile = async (field: string) => {
     setIsUpdating(true);
-    let value = '';
-    if (field === 'username') value = newUsername;
-    if (field === 'display_name') value = newDisplayName;
-    if (field === 'alias') value = newAlias;
-
-    const { error } = await supabase
-      .from('profiles')
-      .update({ [field]: value })
-      .eq('id', profile.id);
-
-    if (!error) {
-      await fetchProfile(); // This refreshes the Overview boxes immediately
-    }
+    const value = field === 'username' ? newUsername : newDisplayName;
+    const { error } = await supabase.from('profiles').update({ [field]: value }).eq('id', profile.id);
+    if (!error) await fetchProfile();
     setIsUpdating(false);
   };
 
@@ -66,76 +52,98 @@ export default function DashboardOverview() {
     }
   };
 
-  if (loading) return <div className="h-screen bg-[#0a0612] flex items-center justify-center"><Loader2 className="animate-spin text-purple-500" /></div>;
+  if (loading) return <div className="h-screen bg-[#0a0a0a] flex items-center justify-center"><Loader2 className="animate-spin text-purple-500" /></div>;
 
   return (
-    <div className="flex h-screen bg-[#0a0612] text-white font-sans overflow-hidden">
+    <div className="flex h-screen bg-[#0a0a0a] text-white font-sans overflow-hidden">
       <Sidebar />
       
       <main className="flex-1 p-8 overflow-y-auto scrollbar-hide">
-        <div className="max-w-[1100px] mx-auto">
+        <div className="max-w-[1200px] mx-auto">
           
-          <h2 className="text-[11px] font-black mb-4 text-neutral-600 uppercase tracking-widest">Account Overview</h2>
+          <h2 className="text-sm font-bold mb-6 text-white">Account Overview</h2>
           
-          {/* STATS GRID - Values here update instantly via fetchProfile() */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <StatCard title="Username" value={profile?.username} sub="URL Active" icon={<Edit3 size={14}/>} />
-            <StatCard title="Display Name" value={profile?.display_name || "None"} sub="Public Name" icon={<User size={14}/>} />
-            <StatCard title="UID" value={profile?.id_count ? String(profile.id_count).padStart(6, '0') : "000000"} sub="Unique ID" icon={<Hash size={14}/>} />
-            <StatCard title="Views" value={profile?.views || 0} sub="Total Profile Views" icon={<Eye size={14}/>} />
+          {/* TOP STATS GRID */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+            <StatCard title="Username" value={profile?.username} sub="Change available now" icon={<Edit3 size={16}/>} />
+            <StatCard title="Alias" value="0 Aliases Used" sub="1 Alias Slots Remaining" icon={<User size={16}/>} />
+            <StatCard title="UID" value={profile?.id_count ? profile.id_count.toLocaleString() : "777,544"} sub="Among the first 44%" icon={<Hash size={16}/>} />
+            <StatCard title="Profile Views" value={profile?.views || 0} sub="+0 views since last 7 days" icon={<Eye size={16}/>} />
           </div>
 
-          {/* REDIRECTIVE COMPLETION CHECKLIST */}
-          <div className="flex flex-wrap gap-3 mb-10">
-            <CompletionBadge label="Upload An Avatar" icon={<Camera size={14}/>} path="/dashboard/customize" completed={!!profile?.avatar_url} />
-            <CompletionBadge label="Add A Description" icon={<FileText size={14}/>} path="/dashboard/customize" completed={!!profile?.description} />
-            <CompletionBadge label="Link Discord Account" icon={<MessageSquare size={14}/>} path="#connections" completed={!!profile?.discord_id} />
-            <CompletionBadge label="Add Socials" icon={<Share2 size={14}/>} path="/dashboard/links" completed={false} />
-            <CompletionBadge label="Reach 10 profile views" icon={<TrendingUp size={14}/>} path="#" completed={(profile?.views || 0) >= 10} />
-          </div>
+          <h2 className="text-sm font-bold mb-6 text-white">Account Statistics</h2>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="flex flex-col lg:flex-row gap-6">
             
-            {/* EDIT SECTION */}
-            <section className="space-y-6">
-              <div className="bg-[#111111] border border-white/5 p-6 rounded-[2rem]">
-                <h3 className="text-lg font-bold mb-4">Change Username</h3>
-                <div className="space-y-4">
-                  <InputGroup label="New Username" value={newUsername} onChange={setNewUsername} />
-                  <button onClick={() => handleUpdateProfile('username')} className="w-full bg-purple-600 hover:bg-purple-700 py-4 rounded-2xl font-black text-sm transition-all">
-                    Save Changes
-                  </button>
+            {/* LEFT: PROFILE COMPLETION */}
+            <div className="flex-1 bg-[#111111] border border-white/5 rounded-2xl p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-sm font-bold">Profile Completion</h3>
+                <span className="text-xs text-neutral-500">80% completed</span>
+              </div>
+              
+              <div className="w-full bg-white/5 h-2 rounded-full mb-6 overflow-hidden">
+                <div className="bg-purple-600 h-full w-[80%] rounded-full shadow-[0_0_10px_rgba(147,51,234,0.5)]"></div>
+              </div>
+
+              <div className="bg-amber-500/5 border border-amber-500/10 p-4 rounded-xl flex gap-3 mb-6">
+                <AlertCircle size={18} className="text-amber-500 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-bold text-white">Your profile isn't complete yet!</p>
+                  <p className="text-xs text-neutral-500">Complete your profile to make it more discoverable and appealing.</p>
                 </div>
               </div>
 
-              {/* Added Display Name Box */}
-              <div className="bg-[#111111] border border-white/5 p-6 rounded-[2rem]">
-                <h3 className="text-lg font-bold mb-4">Change Display Name</h3>
-                <div className="space-y-4">
-                  <InputGroup label="New Display Name" value={newDisplayName} onChange={setNewDisplayName} />
-                  <button onClick={() => handleUpdateProfile('display_name')} className="w-full bg-purple-600 hover:bg-purple-700 py-4 rounded-2xl font-black text-sm transition-all">
-                    Save Changes
-                  </button>
-                </div>
+              <div className="flex flex-wrap gap-3">
+                <CompletionButton label="Upload An Avatar" icon={<User size={14}/>} completed={!!profile?.avatar_url} path="/dashboard/customize" />
+                <CompletionButton label="Add A Description" icon={<Check size={14}/>} completed={!!profile?.description} path="/dashboard/customize" />
+                <CompletionButton label="Link Discord Account" icon={<Check size={14}/>} completed={!!profile?.discord_id} path="#connections" />
+                <CompletionButton label="Add Socials" icon={<Check size={14}/>} completed={false} path="/dashboard/links" />
+                <CompletionButton label="Reach 10 profile views" icon={<Check size={14}/>} completed={(profile?.views || 0) >= 10} fullWidth />
               </div>
-            </section>
+            </div>
 
-            {/* CONNECTIONS SECTION */}
-            <section id="connections">
-              <div className="bg-[#111111] border border-white/5 p-6 rounded-[2rem]">
-                <h3 className="text-lg font-bold mb-1">Connections</h3>
-                <p className="text-sm text-neutral-500 mb-6">Link your Discord account to scope.gg</p>
-                <div className="flex items-center gap-2">
-                  <button onClick={handleDiscordAction} className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl font-bold transition-all ${profile?.discord_id ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/10' : 'bg-[#5865F2] text-white hover:bg-[#4752C4]'}`}>
-                    <MessageSquare size={18} fill={profile?.discord_id ? "none" : "currentColor"} />
-                    {profile?.discord_id ? 'Discord Connected' : 'Connect Discord'}
-                  </button>
-                  {profile?.discord_id && (
-                    <button onClick={handleDiscordAction} className="p-4 bg-red-500/10 text-red-500 rounded-2xl hover:bg-red-500/20 border border-red-500/10 transition-all"><X size={20} /></button>
-                  )}
+            {/* RIGHT: MANAGE & CONNECTIONS */}
+            <div className="w-full lg:w-[350px] space-y-6">
+              <div className="bg-[#111111] border border-white/5 rounded-2xl p-6">
+                <h3 className="text-sm font-bold mb-1">Manage your account</h3>
+                <p className="text-xs text-neutral-500 mb-4">Change your email, username and more.</p>
+                
+                <div className="space-y-2">
+                  <ManageLink icon={<Edit3 size={16}/>} label="Change Username" onClick={() => {/* Open Modal */}} />
+                  <ManageLink icon={<User size={16}/>} label="Change Display Name" onClick={() => {/* Open Modal */}} />
+                  <ManageLink icon={<Share2 size={16}/>} label="Manage Aliases" />
+                  <ManageLink icon={<Settings size={16}/>} label="Account Settings" />
+                </div>
+
+                <div id="connections" className="mt-8">
+                  <h3 className="text-sm font-bold mb-1">Connections</h3>
+                  <p className="text-xs text-neutral-500 mb-4">Link your Discord account to guns.lol</p>
+                  
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={handleDiscordAction}
+                      className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all ${
+                        profile?.discord_id 
+                        ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/20' 
+                        : 'bg-[#5865F2] text-white hover:bg-[#4752C4]'
+                      }`}
+                    >
+                      <MessageSquare size={16} fill={profile?.discord_id ? "none" : "currentColor"} />
+                      {profile?.discord_id ? 'Discord Connected' : 'Connect Discord'}
+                    </button>
+                    {profile?.discord_id && (
+                      <button 
+                        onClick={handleDiscordAction}
+                        className="p-3 bg-red-500/20 text-red-500 rounded-xl hover:bg-red-500/30 border border-red-500/20 transition-all"
+                      >
+                        <X size={18} />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </section>
+            </div>
 
           </div>
         </div>
@@ -144,36 +152,51 @@ export default function DashboardOverview() {
   );
 }
 
-// HELPER COMPONENTS
-function InputGroup({ label, value, onChange }: any) {
+// UI COMPONENTS
+function StatCard({ title, value, sub, icon }: any) {
   return (
-    <div>
-      <label className="text-[10px] font-black text-neutral-500 uppercase mb-2 block">{label}</label>
-      <input type="text" value={value} onChange={(e) => onChange(e.target.value)} className="w-full bg-black border border-white/5 p-4 rounded-xl text-sm focus:outline-none focus:border-purple-500/50 transition-all" />
+    <div className="bg-[#111111] border border-white/5 p-5 rounded-2xl">
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <p className="text-xs text-neutral-500 mb-1">{title}</p>
+          <p className="text-lg font-bold text-white">{value || "---"}</p>
+        </div>
+        <div className="text-neutral-500">{icon}</div>
+      </div>
+      <p className="text-[10px] text-neutral-600 font-medium">{sub}</p>
     </div>
   );
 }
 
-function CompletionBadge({ label, icon, path, completed }: any) {
+function CompletionButton({ label, icon, completed, path, fullWidth }: any) {
   return (
-    <a href={path} className={`flex items-center gap-2.5 px-4 py-2.5 rounded-full border text-[12px] font-bold transition-all ${completed ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-white/5 border-white/5 text-neutral-500 hover:bg-white/10'}`}>
-      <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${completed ? 'bg-green-500 border-green-500 text-black' : 'border-neutral-700'}`}>
-        {completed ? <Check size={10} strokeWidth={4} /> : <div className="w-1.5 h-1.5 rounded-full bg-neutral-700" />}
+    <a 
+      href={path}
+      className={`flex items-center gap-2 px-4 py-2 rounded-full border text-[11px] font-bold transition-all ${
+        fullWidth ? 'w-full mt-1' : ''
+      } ${
+        completed 
+        ? 'bg-green-500/5 border-green-500/20 text-white' 
+        : 'bg-white/5 border-white/5 text-neutral-400 hover:bg-white/10'
+      }`}
+    >
+      <div className={`w-4 h-4 rounded-full flex items-center justify-center ${completed ? 'bg-green-500 text-black' : 'bg-neutral-800'}`}>
+        {completed ? <Check size={10} strokeWidth={4} /> : icon}
       </div>
       {label}
+      {!completed && !fullWidth && <ChevronRight size={14} className="ml-auto text-neutral-600" />}
     </a>
   );
 }
 
-function StatCard({ title, value, sub, icon }: any) {
+function ManageLink({ icon, label, onClick }: any) {
   return (
-    <div className="bg-[#111111] border border-white/5 p-5 rounded-3xl group">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-[10px] font-black text-neutral-600 uppercase tracking-widest">{title}</span>
-        <div className="p-2 bg-white/5 rounded-lg group-hover:text-purple-500 transition-colors">{icon}</div>
-      </div>
-      <p className="text-xl font-bold truncate mb-1">{value || "---"}</p>
-      <p className="text-[10px] font-bold text-neutral-700 uppercase tracking-tighter">{sub}</p>
-    </div>
+    <button 
+      onClick={onClick}
+      className="w-full flex items-center gap-3 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl transition-all group"
+    >
+      <span className="text-neutral-500 group-hover:text-white transition-colors">{icon}</span>
+      <span className="text-xs font-bold text-neutral-300 group-hover:text-white transition-colors">{label}</span>
+    </button>
   );
 }
