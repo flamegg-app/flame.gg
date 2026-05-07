@@ -1,228 +1,179 @@
 import React, { useEffect, useState } from 'react';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../lib/supabase';
+import Sidebar from '../components/Sidebar';
 import { 
-  User, Hash, Eye, Edit3, Settings, 
-  LogOut, CheckCircle2, AlertCircle, X 
+  Edit3, User, Hash, Eye, 
+  MessageSquare, X, Check, Loader2,
+  Camera, FileText, Share2, TrendingUp
 } from 'lucide-react';
-import { FaDiscord } from 'react-icons/fa';
-import { useRouter } from 'next/router';
-import Sidebar from '../../components/Sidebar'; // Ensure this path matches your Sidebar.tsx location
 
 export default function DashboardOverview() {
-  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
-
-  // Modal States
-  const [isUsernameOpen, setIsUsernameOpen] = useState(false);
-  const [isAliasOpen, setIsAliasOpen] = useState(false);
-
-  const [stats, setStats] = useState({
-    completion: 0,
-    uid: "000,000",
-    views: 0
-  });
+  
+  // Input States
+  const [newUsername, setNewUsername] = useState('');
+  const [newDisplayName, setNewDisplayName] = useState('');
+  const [newAlias, setNewAlias] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return router.push('/login');
+    fetchProfile();
+  }, []);
 
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-      if (profileData) {
-        setProfile(profileData);
-
-        const formattedUID = String(profileData.id_count || "0").padStart(6, '0').replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-        const criteria = [
-          !!profileData.avatar_url,
-          !!profileData.description,
-          !!profileData.discord_id,
-          !!profileData.socials,
-          (profileData.views >= 10)
-        ];
-        
-        const completedCount = criteria.filter(Boolean).length;
-        setStats({
-          completion: (completedCount / criteria.length) * 100,
-          uid: formattedUID,
-          views: profileData.views || 0
-        });
+  async function fetchProfile() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+      if (data) {
+        setProfile(data);
+        setNewUsername(data.username || '');
+        setNewDisplayName(data.display_name || ''); // Added Display Name
+        setNewAlias(data.alias || '');
       }
-      setLoading(false);
-    };
+    }
+    setLoading(false);
+  }
 
-    fetchDashboardData();
-  }, [router]);
+  // SAVE CHANGES HANDLER
+  const handleUpdateProfile = async (field: string) => {
+    setIsUpdating(true);
+    let value = '';
+    if (field === 'username') value = newUsername;
+    if (field === 'display_name') value = newDisplayName;
+    if (field === 'alias') value = newAlias;
 
-  if (loading) return <div className="min-h-screen bg-[#0a0612] flex items-center justify-center text-white font-bold tracking-tighter">Loading scope.gg...</div>;
+    const { error } = await supabase
+      .from('profiles')
+      .update({ [field]: value })
+      .eq('id', profile.id);
+
+    if (!error) {
+      await fetchProfile(); // This refreshes the Overview boxes immediately
+    }
+    setIsUpdating(false);
+  };
+
+  const handleDiscordAction = async () => {
+    if (profile?.discord_id) {
+      const { error } = await supabase.from('profiles').update({ discord_id: null }).eq('id', profile.id);
+      if (!error) fetchProfile();
+    } else {
+      await supabase.auth.signInWithOAuth({
+        provider: 'discord',
+        options: { redirectTo: window.location.origin + '/dashboard' }
+      });
+    }
+  };
+
+  if (loading) return <div className="h-screen bg-[#0a0612] flex items-center justify-center"><Loader2 className="animate-spin text-purple-500" /></div>;
 
   return (
-    <div className="flex min-h-screen bg-[#0a0612] text-white font-['Satoshi',sans-serif]">
-      
-      {/* 1. Global Sidebar Component */}
+    <div className="flex h-screen bg-[#0a0612] text-white font-sans overflow-hidden">
       <Sidebar />
-
-      {/* 2. Main Content Area */}
-      <main className="flex-1 p-4 md:p-10 overflow-y-auto">
-        <div className="max-w-[1200px] mx-auto">
+      
+      <main className="flex-1 p-8 overflow-y-auto scrollbar-hide">
+        <div className="max-w-[1100px] mx-auto">
           
-          {/* Section: Account Overview */}
-          <section className="mb-10">
-            <h2 className="text-[13px] font-black mb-5 text-neutral-500 uppercase tracking-widest">Account Overview</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <StatCard title="Username" value={profile?.username || "Guest"} sub="Custom URL active" icon={<Edit3 size={18}/>} />
-              <StatCard title="Alias" value={profile?.alias || "None Set"} sub="Primary display name" icon={<User size={18}/>} />
-              <StatCard title="UID" value={stats.uid} sub="Unique Member ID" icon={<Hash size={18}/>} />
-              <StatCard title="Profile Views" value={stats.views.toLocaleString()} sub="Total unique visitors" icon={<Eye size={18}/>} />
-            </div>
-          </section>
+          <h2 className="text-[11px] font-black mb-4 text-neutral-600 uppercase tracking-widest">Account Overview</h2>
+          
+          {/* STATS GRID - Values here update instantly via fetchProfile() */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <StatCard title="Username" value={profile?.username} sub="URL Active" icon={<Edit3 size={14}/>} />
+            <StatCard title="Display Name" value={profile?.display_name || "None"} sub="Public Name" icon={<User size={14}/>} />
+            <StatCard title="UID" value={profile?.id_count ? String(profile.id_count).padStart(6, '0') : "000000"} sub="Unique ID" icon={<Hash size={14}/>} />
+            <StatCard title="Views" value={profile?.views || 0} sub="Total Profile Views" icon={<Eye size={14}/>} />
+          </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* REDIRECTIVE COMPLETION CHECKLIST */}
+          <div className="flex flex-wrap gap-3 mb-10">
+            <CompletionBadge label="Upload An Avatar" icon={<Camera size={14}/>} path="/dashboard/customize" completed={!!profile?.avatar_url} />
+            <CompletionBadge label="Add A Description" icon={<FileText size={14}/>} path="/dashboard/customize" completed={!!profile?.description} />
+            <CompletionBadge label="Link Discord Account" icon={<MessageSquare size={14}/>} path="#connections" completed={!!profile?.discord_id} />
+            <CompletionBadge label="Add Socials" icon={<Share2 size={14}/>} path="/dashboard/links" completed={false} />
+            <CompletionBadge label="Reach 10 profile views" icon={<TrendingUp size={14}/>} path="#" completed={(profile?.views || 0) >= 10} />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
-            {/* Left Column: Account Statistics */}
-            <div className="lg:col-span-8 space-y-8">
-              <section>
-                <h2 className="text-[13px] font-black mb-5 text-neutral-500 uppercase tracking-widest">Account Statistics</h2>
-                <div className="bg-[#0f0a1a] border border-white/5 rounded-[2.5rem] p-8 shadow-2xl">
-                  
-                  <div className="mb-8">
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="font-black text-[15px]">Profile Completion</span>
-                      <span className="text-neutral-500 text-[13px] font-bold">{stats.completion}% completed</span>
-                    </div>
-                    <div className="w-full bg-white/5 h-3 rounded-full overflow-hidden">
-                      <div 
-                        className="bg-purple-600 h-full transition-all duration-700 shadow-[0_0_20px_rgba(147,51,234,0.4)]" 
-                        style={{ width: `${stats.completion}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  {stats.completion < 100 && (
-                    <div className="bg-[#1a1524] border border-white/5 p-6 rounded-3xl flex items-start gap-4 mb-8">
-                      <div className="bg-amber-500/20 p-2 rounded-full">
-                        <AlertCircle className="text-amber-500" size={18} />
-                      </div>
-                      <div>
-                        <p className="font-black text-[15px] text-amber-200">Your profile isn't complete yet!</p>
-                        <p className="text-[13px] font-bold text-neutral-500 mt-1">Complete the tasks below to reach 100%.</p>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="flex flex-wrap gap-3">
-                    <CompletionBadge text="Upload An Avatar" active={!!profile?.avatar_url} />
-                    <CompletionBadge text="Add A Description" active={!!profile?.description} />
-                    <CompletionBadge text="Link Discord Account" active={!!profile?.discord_id} />
-                    <CompletionBadge text="Add Socials" active={!!profile?.socials} />
-                    <CompletionBadge text="Reach 10 profile views" active={stats.views >= 10} />
-                  </div>
-                </div>
-              </section>
-            </div>
-
-            {/* Right Column: Manage Account */}
-            <div className="lg:col-span-4 space-y-6">
-              <div className="bg-[#0f0a1a] border border-white/5 rounded-[2.5rem] p-8">
-                <h3 className="font-black text-xl mb-1 text-white">Manage account</h3>
-                <p className="text-neutral-500 text-[13px] font-bold mb-8">Modify your identity and settings.</p>
-                
-                <div className="space-y-3">
-                  <MenuButton icon={<Edit3 size={16}/>} label="Change Username" onClick={() => setIsUsernameOpen(true)} />
-                  <MenuButton icon={<User size={16}/>} label="Change Display Name" onClick={() => setIsAliasOpen(true)} />
-                  <MenuButton icon={<Settings size={16}/>} label="Account Settings" onClick={() => router.push('/dashboard/settings')} />
-                </div>
-
-                <div className="mt-12">
-                  <h3 className="font-black text-[11px] uppercase tracking-[0.2em] text-neutral-600 mb-5 text-center lg:text-left">Connections</h3>
-                  <div className="flex flex-col gap-3">
-                    <button className={`w-full py-4 rounded-2xl flex items-center justify-center gap-3 text-sm font-black transition-all ${
-                      profile?.discord_id 
-                      ? 'bg-[#5865F2]/10 border border-[#5865F2]/20 text-[#5865F2]' 
-                      : 'bg-white/5 border border-white/10 text-white hover:bg-white/10'
-                    }`}>
-                      <FaDiscord size={18}/> {profile?.discord_id ? 'Discord Connected' : 'Connect Discord'}
-                    </button>
-                    <button 
-                      onClick={async () => { await supabase.auth.signOut(); router.push('/login'); }}
-                      className="w-full bg-red-500/5 border border-red-500/10 text-red-500/80 py-4 rounded-2xl font-black text-sm hover:bg-red-500/10 transition-all flex items-center justify-center gap-2"
-                    >
-                      <LogOut size={18} /> Sign Out
-                    </button>
-                  </div>
+            {/* EDIT SECTION */}
+            <section className="space-y-6">
+              <div className="bg-[#111111] border border-white/5 p-6 rounded-[2rem]">
+                <h3 className="text-lg font-bold mb-4">Change Username</h3>
+                <div className="space-y-4">
+                  <InputGroup label="New Username" value={newUsername} onChange={setNewUsername} />
+                  <button onClick={() => handleUpdateProfile('username')} className="w-full bg-purple-600 hover:bg-purple-700 py-4 rounded-2xl font-black text-sm transition-all">
+                    Save Changes
+                  </button>
                 </div>
               </div>
-            </div>
+
+              {/* Added Display Name Box */}
+              <div className="bg-[#111111] border border-white/5 p-6 rounded-[2rem]">
+                <h3 className="text-lg font-bold mb-4">Change Display Name</h3>
+                <div className="space-y-4">
+                  <InputGroup label="New Display Name" value={newDisplayName} onChange={setNewDisplayName} />
+                  <button onClick={() => handleUpdateProfile('display_name')} className="w-full bg-purple-600 hover:bg-purple-700 py-4 rounded-2xl font-black text-sm transition-all">
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            {/* CONNECTIONS SECTION */}
+            <section id="connections">
+              <div className="bg-[#111111] border border-white/5 p-6 rounded-[2rem]">
+                <h3 className="text-lg font-bold mb-1">Connections</h3>
+                <p className="text-sm text-neutral-500 mb-6">Link your Discord account to scope.gg</p>
+                <div className="flex items-center gap-2">
+                  <button onClick={handleDiscordAction} className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl font-bold transition-all ${profile?.discord_id ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/10' : 'bg-[#5865F2] text-white hover:bg-[#4752C4]'}`}>
+                    <MessageSquare size={18} fill={profile?.discord_id ? "none" : "currentColor"} />
+                    {profile?.discord_id ? 'Discord Connected' : 'Connect Discord'}
+                  </button>
+                  {profile?.discord_id && (
+                    <button onClick={handleDiscordAction} className="p-4 bg-red-500/10 text-red-500 rounded-2xl hover:bg-red-500/20 border border-red-500/10 transition-all"><X size={20} /></button>
+                  )}
+                </div>
+              </div>
+            </section>
+
           </div>
         </div>
       </main>
-
-      {/* Pop-up Modals for Username/Alias */}
-      <DashboardModal isOpen={isUsernameOpen} onClose={() => setIsUsernameOpen(false)} title="Change Username" />
-      <DashboardModal isOpen={isAliasOpen} onClose={() => setIsAliasOpen(false)} title="Change Display Name" />
     </div>
   );
 }
 
-// Sub-components
+// HELPER COMPONENTS
+function InputGroup({ label, value, onChange }: any) {
+  return (
+    <div>
+      <label className="text-[10px] font-black text-neutral-500 uppercase mb-2 block">{label}</label>
+      <input type="text" value={value} onChange={(e) => onChange(e.target.value)} className="w-full bg-black border border-white/5 p-4 rounded-xl text-sm focus:outline-none focus:border-purple-500/50 transition-all" />
+    </div>
+  );
+}
+
+function CompletionBadge({ label, icon, path, completed }: any) {
+  return (
+    <a href={path} className={`flex items-center gap-2.5 px-4 py-2.5 rounded-full border text-[12px] font-bold transition-all ${completed ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-white/5 border-white/5 text-neutral-500 hover:bg-white/10'}`}>
+      <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${completed ? 'bg-green-500 border-green-500 text-black' : 'border-neutral-700'}`}>
+        {completed ? <Check size={10} strokeWidth={4} /> : <div className="w-1.5 h-1.5 rounded-full bg-neutral-700" />}
+      </div>
+      {label}
+    </a>
+  );
+}
+
 function StatCard({ title, value, sub, icon }: any) {
   return (
-    <div className="bg-[#0f0a1a] border border-white/5 p-7 rounded-[2rem] relative group hover:border-purple-500/30 transition-all duration-300">
-      <div className="absolute right-7 top-8 text-neutral-800 group-hover:text-purple-500 transition-colors">
-        {icon}
+    <div className="bg-[#111111] border border-white/5 p-5 rounded-3xl group">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-[10px] font-black text-neutral-600 uppercase tracking-widest">{title}</span>
+        <div className="p-2 bg-white/5 rounded-lg group-hover:text-purple-500 transition-colors">{icon}</div>
       </div>
-      <p className="text-neutral-500 text-[10px] font-black uppercase tracking-widest mb-4">{title}</p>
-      <p className="text-2xl font-black mb-1 text-white">{value}</p>
-      <p className="text-neutral-600 text-[11px] font-bold tracking-tight">{sub}</p>
-    </div>
-  );
-}
-
-function CompletionBadge({ text, active }: { text: string; active: boolean }) {
-  return (
-    <div className={`flex items-center gap-3 px-5 py-3.5 rounded-2xl border text-[13px] font-bold transition-all duration-300 ${
-      active 
-      ? 'bg-green-500/5 border-green-500/10 text-green-500' 
-      : 'bg-white/5 border-white/5 text-neutral-500'
-    }`}>
-      {active ? <CheckCircle2 size={16} /> : <div className="w-4 h-4 rounded-full border-2 border-neutral-800" />}
-      <span>{text}</span>
-    </div>
-  );
-}
-
-function MenuButton({ icon, label, onClick }: any) {
-  return (
-    <button onClick={onClick} className="w-full flex items-center gap-3 bg-white/[0.02] hover:bg-white/[0.05] border border-white/5 py-4 px-6 rounded-2xl transition-all duration-200 text-[14px] font-black text-neutral-300">
-      <span className="text-neutral-600">{icon}</span>
-      {label}
-    </button>
-  );
-}
-
-function DashboardModal({ isOpen, onClose, title }: any) {
-  if (!isOpen) return null;
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
-      <div className="bg-[#0f0a1a] border border-white/10 w-full max-w-md rounded-[2.5rem] p-10 shadow-3xl">
-        <div className="flex justify-between items-center mb-8">
-          <h3 className="text-2xl font-black text-white">{title}</h3>
-          <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full text-neutral-500 transition-colors"><X size={24}/></button>
-        </div>
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-[11px] font-black uppercase text-neutral-500 tracking-widest ml-1">New {title}</label>
-            <input className="w-full bg-[#050505] border border-white/5 p-5 rounded-2xl focus:border-purple-500/50 focus:outline-none transition-all font-bold text-white placeholder:text-neutral-800" placeholder={`Enter ${title.toLowerCase()}...`} />
-          </div>
-          <button className="w-full bg-purple-600 py-5 rounded-2xl font-black text-lg hover:bg-purple-500 hover:shadow-[0_0_25px_rgba(147,51,234,0.3)] transition-all text-white">Save Changes</button>
-        </div>
-      </div>
+      <p className="text-xl font-bold truncate mb-1">{value || "---"}</p>
+      <p className="text-[10px] font-bold text-neutral-700 uppercase tracking-tighter">{sub}</p>
     </div>
   );
 }
